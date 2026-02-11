@@ -44,6 +44,22 @@ export const expertGuard: CanActivateFn = () => {
         router.navigate(['/']);
         return false;
       }
+      
+      // Check if user is an expert
+      const token = localStorage.getItem('token');
+      if (token) {
+        try {
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          if (payload.role !== 'ROLE_EXPERT') {
+            router.navigate(['/']);
+            return false;
+          }
+        } catch (e) {
+          router.navigate(['/']);
+          return false;
+        }
+      }
+      
       return true;
     })
   );

@@ -17,6 +17,8 @@ export interface CustomerProfile {
   fullName: string;
   phone: string;
   email: string;
+  age?: number | null;
+  address?: string | null;
   preferredZoneIds: string[];
 }
 
@@ -25,12 +27,14 @@ export interface ExpertProfile {
   userId: string;
   fullName: string;
   phone: string;
+  email?: string;
   skills: string[];
   zoneIds: string[];
   status: 'PENDING' | 'APPROVED' | 'REJECTED';
   onlineStatus: 'ONLINE' | 'OFFLINE';
   rating: number;
   totalJobs: number;
+  idProof?: any;
   createdAt: string;
 }
 
@@ -51,6 +55,8 @@ export interface RegisterCustomerRequest {
   phone: string;
   email: string;
   password: string;
+  age?: number;
+  address?: string;
   preferredZoneIds?: string[];
 }
 
@@ -60,5 +66,6 @@ export interface RegisterExpertRequest {
   email: string;
   password: string;
   skills: string[];
-  zoneIds: string[];
+  zoneIds?: string[];
+  idProof?: any;
 }

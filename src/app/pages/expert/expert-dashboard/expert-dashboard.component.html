@@ -1,0 +1,129 @@
+<div class="expert-dashboard">
+  <header class="dashboard-header">
+    <div class="header-left">
+      <div class="logo">
+        <span class="material-icons logo-icon">home_work</span>
+        <span class="logo-text">HouseMate Expert</span>
+      </div>
+    </div>
+    
+    <div class="header-right">
+      <div class="location-selector">
+        <span class="material-icons">location_on</span>
+        <span>Bangalore</span>
+      </div>
+      
+      <div class="user-menu" *ngIf="user$ | async as user">
+        <span class="user-avatar material-icons">account_circle</span>
+        <span class="user-name">{{ user.fullName }}</span>
+        <button class="logout-btn" (click)="onLogout()">
+          <span class="material-icons">logout</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="dashboard-main">
+    <!-- Availability Banner -->
+    <div class="availability-banner" [class.online]="isOnline">
+      <div class="banner-content">
+        <div class="greeting" *ngIf="user$ | async as user">
+          <span class="user-avatar material-icons">account_circle</span>
+          <div>
+            <h2>Welcome, {{ user.fullName }}!</h2>
+            <p>{{ isOnline ? 'You are online and ready to accept jobs' : 'You are offline' }}</p>
+          </div>
+        </div>
+        
+        <button class="toggle-status-btn" (click)="toggleOnlineStatus()">
+          <span class="material-icons">{{ isOnline ? 'pause_circle' : 'play_circle' }}</span>
+          {{ isOnline ? 'Go Offline' : 'Go Online' }}
+        </button>
+      </div>
+    </div>
+
+    <div class="dashboard-grid">
+      <!-- Main Content -->
+      <div class="main-content">
+        <!-- Reports -->
+        <div class="reports-section">
+          <h3>Performance Overview</h3>
+          <div class="reports-grid">
+            <div class="report-card">
+              <span class="material-icons card-icon">today</span>
+              <div class="card-content">
+                <h4>{{ stats.todayJobs }}</h4>
+                <p>Today's Jobs</p>
+              </div>
+            </div>
+            
+            <div class="report-card">
+              <span class="material-icons card-icon">date_range</span>
+              <div class="card-content">
+                <h4>{{ stats.thisWeekJobs }}</h4>
+                <p>This Week</p>
+              </div>
+            </div>
+            
+            <div class="report-card">
+              <span class="material-icons card-icon">currency_rupee</span>
+              <div class="card-content">
+                <h4>₹{{ stats.totalEarnings }}</h4>
+                <p>Total Earnings</p>
+              </div>
+            </div>
+            
+            <div class="report-card">
+              <span class="material-icons card-icon">star</span>
+              <div class="card-content">
+                <h4>{{ stats.rating }}</h4>
+                <p>My Rating</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Appointments -->
+        <div class="appointments-section">
+          <h3>My Appointments</h3>
+          
+          <div class="empty-state" *ngIf="appointments.length === 0">
+            <span class="material-icons empty-icon">event_busy</span>
+            <h4>No appointments yet</h4>
+            <p>Your accepted bookings will appear here</p>
+          </div>
+
+          <div class="appointments-list" *ngIf="appointments.length > 0">
+            <!-- Appointment cards will be loaded from backend -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <!-- Pending Requests -->
+        <div class="pending-requests">
+          <h3>Pending Requests</h3>
+          
+          <div class="empty-state-small" *ngIf="pendingRequests.length === 0">
+            <span class="material-icons">inbox</span>
+            <p>No pending requests</p>
+          </div>
+
+          <div class="requests-list" *ngIf="pendingRequests.length > 0">
+            <!-- Request cards will be loaded from backend -->
+          </div>
+        </div>
+
+        <!-- Calendar -->
+        <div class="calendar-widget">
+          <h3>My Calendar</h3>
+          <div class="calendar-content">
+            <span class="material-icons">calendar_month</span>
+            <p>Calendar integration coming soon</p>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+</div>

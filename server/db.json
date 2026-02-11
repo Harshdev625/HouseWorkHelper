@@ -5,7 +5,7 @@
  "phone": "+919876543210",
  "email": "customer@example.com",
  "fullName": "Asha Kumar",
- "password": "Str0ngP@ssw0rd!",
+ "password": "$2b$10$VNPLXNh2eo.8.VAuyIziJ.VPyNQeErsjksJQUrkRLG32rrS7Vac6K",
  "roles": ["ROLE_CUSTOMER"],
  "blocked": false,
  "createdAt": "2026-01-15T10:00:00Z"
@@ -15,7 +15,7 @@
  "phone": "+919876543211",
  "email": "expert@example.com",
  "fullName": "Ravi Sharma",
- "password": "Str0ngP@ssw0rd!",
+ "password": "$2b$10$VNPLXNh2eo.8.VAuyIziJ.VPyNQeErsjksJQUrkRLG32rrS7Vac6K",
  "roles": ["ROLE_EXPERT"],
  "blocked": false,
  "createdAt": "2026-01-10T10:00:00Z"
@@ -25,7 +25,7 @@
  "phone": "+919876543213",
  "email": "john@example.com",
  "fullName": "John Doe",
- "password": "Str0ngP@ssw0rd!",
+ "password": "$2b$10$VNPLXNh2eo.8.VAuyIziJ.VPyNQeErsjksJQUrkRLG32rrS7Vac6K",
  "roles": ["ROLE_CUSTOMER"],
  "blocked": false,
  "createdAt": "2026-01-18T10:00:00Z"
@@ -38,6 +38,8 @@
  "fullName": "Asha Kumar",
  "phone": "+919876543210",
  "email": "customer@example.com",
+ "age": 32,
+ "address": "123 MG Road, Bangalore",
  "preferredZoneIds": ["a3c62d2c-1d4b-4a26-9d0c-b6c1a7a7a111"]
 },
 {
@@ -46,6 +48,8 @@
  "fullName": "John Doe",
  "phone": "+919876543213",
  "email": "john@example.com",
+ "age": 28,
+ "address": "456 Park Street, Bangalore",
  "preferredZoneIds": ["a3c62d2c-1d4b-4a26-9d0c-b6c1a7a7a111"]
 }
 ],
@@ -364,6 +368,7 @@
  "userId": "8f9c7b3e-1d41-5d7e-b9eg-0c9fgc0c0c52",
  "fullName": "Ravi Sharma",
  "phone": "+919876543211",
+ "email": "expert@example.com",
  "skills": ["Cleaning", "Plumbing", "Electrical"],
  "zoneIds": ["a3c62d2c-1d4b-4a26-9d0c-b6c1a7a7a111"],
  "status": "APPROVED",
@@ -377,6 +382,7 @@
  "userId": "expert-2-user-id",
  "fullName": "Amit Patel",
  "phone": "+919876543214",
+ "email": "amit@example.com",
  "skills": ["Carpentry", "Electrical"],
  "zoneIds": ["a3c62d2c-1d4b-4a26-9d0c-b6c1a7a7a111"],
  "status": "APPROVED",

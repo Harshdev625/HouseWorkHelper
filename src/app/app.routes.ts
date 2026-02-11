@@ -4,7 +4,8 @@ import { LoginComponent } from './pages/auth/login/login.component';
 import { RegisterCustomerComponent } from './pages/auth/register-customer/register-customer.component';
 import { RegisterExpertComponent } from './pages/auth/register-expert/register-expert.component';
 import { CustomerDashboardComponent } from './pages/customer/customer-dashboard/customer-dashboard.component';
-import { authGuard, customerGuard } from './core/guards/auth.guard';
+import { ExpertDashboardComponent } from './pages/expert/expert-dashboard/expert-dashboard.component';
+import { authGuard, customerGuard, expertGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   { path: '', component: LandingComponent },
@@ -16,6 +17,14 @@ export const routes: Routes = [
     canActivate: [authGuard, customerGuard],
     children: [
       { path: 'dashboard', component: CustomerDashboardComponent },
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
+    ]
+  },
+  { 
+    path: 'expert',
+    canActivate: [authGuard, expertGuard],
+    children: [
+      { path: 'dashboard', component: ExpertDashboardComponent },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },

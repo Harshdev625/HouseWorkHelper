@@ -33,7 +33,7 @@ export class RegisterExpertComponent implements OnInit {
   ngOnInit(): void {
     this.registrationForm = this.fb.group({
       fullName: ['', [Validators.required, Validators.minLength(2)]],
-      phone: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]],
+      phone: ['', [Validators.required, Validators.pattern(/^\+91[0-9]{10}$/)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [
         Validators.required,
@@ -87,7 +87,7 @@ export class RegisterExpertComponent implements OnInit {
     }
     if (control?.hasError('pattern')) {
       if (fieldName === 'phone') {
-        return 'Please enter a valid 10-digit phone number';
+        return 'Please enter a valid phone number with +91 prefix (e.g., +919876543210)';
       }
       if (fieldName === 'password') {
         return 'Password must contain at least 8 characters, one uppercase, one lowercase, one number and one special character';

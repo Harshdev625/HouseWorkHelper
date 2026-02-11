@@ -102,6 +102,12 @@
   outline: none;
 }
 
+.input.textarea {
+  resize: vertical;
+  min-height: 60px;
+  font-family: inherit;
+}
+
 .input:focus {
   border-color: #667eea;
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
