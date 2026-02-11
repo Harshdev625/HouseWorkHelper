@@ -1,0 +1,2 @@
+aws s3 sync . s3://dna-learningndev-prod-bucket/repos/scaffolding_angular_issue_tracker_addeae61-4a3f-4647-89a3-971e25888c47/master/ --delete --exclude ./venv/\* --exclude ./env/\*
+echo Success

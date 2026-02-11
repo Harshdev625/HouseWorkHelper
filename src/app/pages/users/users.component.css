@@ -1,0 +1,41 @@
+section {
+  padding: 1rem;
+}
+
+h2 {
+  margin: 0 0 0.5rem;
+}
+
+.error {
+  color: #b00020;
+  background: #fdecee;
+  border: 1px solid #f2b8b5;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  margin-bottom: 0.75rem;
+}
+
+.loading {
+  color: #555;
+  font-style: italic;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 0;
+}
+
+li {
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  background: #fafafa;
+}
+
+pre {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}

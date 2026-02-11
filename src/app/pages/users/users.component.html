@@ -1,0 +1,29 @@
+<section>
+  <h2>Users Page</h2>
+  <p>Feel free to remove this test page</p>
+
+  <div *ngIf="error as err" class="error">
+    {{ err }}
+  </div>
+
+  <ng-container *ngIf="users$ | async as users; else loading">
+    <div *ngIf="users.length === 0; else list">
+      No users found.
+    </div>
+
+    <ng-template #list>
+      <ul>
+        <li *ngFor="let u of users; trackBy: trackByIndex">
+          {{ u.name }}
+        </li>
+      </ul>
+    </ng-template>
+  </ng-container>
+
+  <ng-template #loading>
+    <div class="loading">Loading users...</div>
+  </ng-template>
+  <nav>
+    <a routerLink="/">Back to Home</a>
+  </nav>
+</section>
