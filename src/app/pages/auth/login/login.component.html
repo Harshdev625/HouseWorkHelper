@@ -14,14 +14,12 @@
           Fast, transparent, and reliable.
         </p>
 
-        <!-- User Type Selector -->
         <div class="user-type-selector">
           <div class="selector-label">{{ getLoginTitle() }}</div>
           <span class="material-icons">expand_more</span>
         </div>
 
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="form">
-          <!-- Email/Phone -->
           <div class="form-group">
             <label class="label">Phone</label>
             <input
@@ -36,7 +34,6 @@
             </span>
           </div>
 
-          <!-- Password -->
           <div class="form-group">
             <label class="label">Password</label>
             <input
@@ -52,33 +49,27 @@
             <a href="#" class="forgot-password">Demo: john&#64;example.com / password</a>
           </div>
 
-          <!-- Error Message -->
           <div class="alert alert-error" *ngIf="error$ | async as error">
             {{ error }}
           </div>
 
-          <!-- Submit Button -->
           <button type="submit" class="btn-submit" [disabled]="loading$ | async">
             <span *ngIf="!(loading$ | async)">LOGIN</span>
             <span *ngIf="loading$ | async">LOGGING IN...</span>
           </button>
 
-          <!-- Register Link -->
           <p class="register-prompt">
             Don't have an account?
             <a [routerLink]="getRegisterLink()" class="link">Register here</a>
           </p>
 
-          <!-- Back to Home -->
           <a routerLink="/" class="back-link">Back to home</a>
         </form>
       </div>
     </div>
 
     <div class="login-right">
-      <div class="illustration">
-        <div class="cleaning-tools">🧹🪣🧽</div>
-      </div>
+      <img src="assets/images/services/allcleaning.jpg" alt="Cleaning Services" class="full-image">
     </div>
   </div>
 </div>

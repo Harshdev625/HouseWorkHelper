@@ -1,151 +1,487 @@
 <div class="register-container">
-  <div class="register-card">
-    <div class="register-header">
-      <div class="logo">
-        <span class="logo-icon material-icons">home_work</span>
-        <span class="logo-text">HouseMate</span>
-      </div>
+  <header class="header">
+    <div class="logo">
+      <span class="logo-badge" aria-hidden="true">H</span>
+      <span class="logo-name">HouseMate</span>
     </div>
 
-    <div class="register-content">
-      <div class="register-left">
-        <h2 class="title">Become an Expert</h2>
-        <h1 class="main-title">JOIN OUR TEAM!</h1>
+    <nav class="header-actions" aria-label="Authentication Links">
+      <a class="header-link" routerLink="/login/customer">Customer Login</a>
+      <a class="header-link" routerLink="/login/expert">Expert Login</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <div class="page-inner">
+      <div class="title-section">
+        <p class="new-user">New User?</p>
+        <h1 class="main-title">REGISTER NOW!</h1>
         <p class="subtitle">
-          Share your skills and earn money by providing trusted home services.
-          Build your reputation and grow your business.
+          To connect with verified, trained home-service experts for ASAP or scheduled services. Fast, transparent, and reliable.
         </p>
+      </div>
 
-        <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()" class="form">
-          <!-- Full Name -->
-          <div class="form-group">
-            <label class="label">
-              <span class="material-icons label-icon">person</span>
-              Full Name
-            </label>
-            <input
-              type="text"
-              formControlName="fullName"
-              class="input"
-              placeholder="e.g., John Doe"
-              [class.error]="registrationForm.get('fullName')?.invalid && registrationForm.get('fullName')?.touched"
-            />
-            <span class="error-message" *ngIf="registrationForm.get('fullName')?.invalid && registrationForm.get('fullName')?.touched">
-              {{ getErrorMessage('fullName') }}
-            </span>
-          </div>
-
-          <!-- Mobile Number -->
-          <div class="form-group">
-            <label class="label">
-              <span class="material-icons label-icon">phone</span>
-              Mobile Number
-            </label>
-            <input
-              type="tel"
-              formControlName="phone"
-              class="input"
-              placeholder="e.g., 9876543210"
-              [class.error]="registrationForm.get('phone')?.invalid && registrationForm.get('phone')?.touched"
-            />
-            <span class="error-message" *ngIf="registrationForm.get('phone')?.invalid && registrationForm.get('phone')?.touched">
-              {{ getErrorMessage('phone') }}
-            </span>
-          </div>
-
-          <!-- Email -->
-          <div class="form-group">
-            <label class="label">
-              <span class="material-icons label-icon">email</span>
-              Email
-            </label>
-            <input
-              type="email"
-              formControlName="email"
-              class="input"
-              placeholder="e.g., john@example.com"
-              [class.error]="registrationForm.get('email')?.invalid && registrationForm.get('email')?.touched"
-            />
-            <span class="error-message" *ngIf="registrationForm.get('email')?.invalid && registrationForm.get('email')?.touched">
-              {{ getErrorMessage('email') }}
-            </span>
-          </div>
-
-          <!-- Password -->
-          <div class="form-group">
-            <label class="label">
-              <span class="material-icons label-icon">lock</span>
-              Password
-            </label>
-            <input
-              type="password"
-              formControlName="password"
-              class="input"
-              placeholder="Enter strong password"
-              [class.error]="registrationForm.get('password')?.invalid && registrationForm.get('password')?.touched"
-            />
-            <span class="error-message" *ngIf="registrationForm.get('password')?.invalid && registrationForm.get('password')?.touched">
-              {{ getErrorMessage('password') }}
-            </span>
-          </div>
-
-          <!-- Skills Selection -->
-          <div class="form-group">
-            <label class="label">
-              <span class="material-icons label-icon">build</span>
-              Select Your Skills
-            </label>
-            <div class="skills-grid">
-              <button
-                type="button"
-                *ngFor="let skill of availableSkills"
-                class="skill-chip"
-                [class.selected]="isSkillSelected(skill)"
-                (click)="toggleSkill(skill)"
-              >
-                {{ skill }}
-              </button>
+      <div class="wizard">
+        <aside class="stepper" aria-label="Registration Steps">
+          <div class="v-step" [class.completed]="currentStep > 1" [class.active]="currentStep === 1">
+            <div class="v-circle" [class.completed]="currentStep > 1" [class.active]="currentStep === 1">
+              <span *ngIf="currentStep > 1" class="material-icons" aria-hidden="true">check</span>
+              <span *ngIf="currentStep <= 1">1</span>
             </div>
-            <span class="error-message" *ngIf="selectedSkills.length === 0 && registrationForm.touched">
-              Please select at least one skill
-            </span>
+            <div class="v-label">
+              <span>Personal</span>
+              <span>Information</span>
+            </div>
           </div>
 
-          <!-- Error Message -->
+          <div class="v-line" [class.completed]="currentStep > 1" aria-hidden="true"></div>
+
+          <div class="v-step" [class.completed]="currentStep > 2" [class.active]="currentStep === 2">
+            <div class="v-circle" [class.completed]="currentStep > 2" [class.active]="currentStep === 2">
+              <span *ngIf="currentStep > 2" class="material-icons" aria-hidden="true">check</span>
+              <span *ngIf="currentStep <= 2">2</span>
+            </div>
+            <div class="v-label">
+              <span>Service</span>
+              <span>Profile</span>
+            </div>
+          </div>
+
+          <div class="v-line" [class.completed]="currentStep > 2" aria-hidden="true"></div>
+
+          <div class="v-step" [class.active]="currentStep === 3">
+            <div class="v-circle" [class.active]="currentStep === 3">
+              <span>3</span>
+            </div>
+            <div class="v-label">
+              <span>ID</span>
+              <span>Verification</span>
+            </div>
+          </div>
+        </aside>
+
+        <section class="register-card">
+          <div class="form-content" *ngIf="currentStep === 1">
+            <div class="info-box">
+              <span class="material-icons info-icon" aria-hidden="true">info</span>
+              <span class="info-text">Ensure all information matches your identity documents for smooth verification.</span>
+            </div>
+
+            <form [formGroup]="personalInfoForm" class="form">
+              <div class="form-row">
+                <div class="form-group full-width">
+                  <label class="label">
+                    <span class="material-icons label-icon" aria-hidden="true">person</span>
+                    Full Name <span class="required">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    formControlName="fullName"
+                    class="input"
+                    placeholder="Enter your full name as per ID"
+                    [class.error]="personalInfoForm.get('fullName')?.invalid && personalInfoForm.get('fullName')?.touched"
+                  />
+                  <span class="error-message" *ngIf="personalInfoForm.get('fullName')?.invalid && personalInfoForm.get('fullName')?.touched">
+                    {{ getErrorMessage(personalInfoForm, 'fullName') }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="label">
+                    <span class="material-icons label-icon" aria-hidden="true">call</span>
+                    Mobile Number <span class="required">*</span>
+                  </label>
+                  <div class="phone-input">
+                    <span class="country-code">+91</span>
+                    <input
+                      type="tel"
+                      formControlName="mobileNumber"
+                      class="input phone-number"
+                      placeholder="9876543210"
+                      maxlength="10"
+                      [class.error]="personalInfoForm.get('mobileNumber')?.invalid && personalInfoForm.get('mobileNumber')?.touched"
+                    />
+                  </div>
+                  <span class="error-message" *ngIf="personalInfoForm.get('mobileNumber')?.invalid && personalInfoForm.get('mobileNumber')?.touched">
+                    {{ getErrorMessage(personalInfoForm, 'mobileNumber') }}
+                  </span>
+                </div>
+
+                <div class="form-group">
+                  <label class="label">
+                    <span class="material-icons label-icon" aria-hidden="true">calendar_month</span>
+                    Date of Birth <span class="required">*</span>
+                  </label>
+                  <input
+                    type="date"
+                    formControlName="dateOfBirth"
+                    class="input"
+                    [class.error]="personalInfoForm.get('dateOfBirth')?.invalid && personalInfoForm.get('dateOfBirth')?.touched"
+                  />
+                  <span class="error-message" *ngIf="personalInfoForm.get('dateOfBirth')?.invalid && personalInfoForm.get('dateOfBirth')?.touched">
+                    {{ getErrorMessage(personalInfoForm, 'dateOfBirth') }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group full-width">
+                  <label class="label">
+                    <span class="material-icons label-icon" aria-hidden="true">location_on</span>
+                    Complete Address <span class="required">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    formControlName="completeAddress"
+                    class="input"
+                    placeholder="House/Flat No., Building Name, Street, Landmark"
+                    [class.error]="personalInfoForm.get('completeAddress')?.invalid && personalInfoForm.get('completeAddress')?.touched"
+                  />
+                  <span class="error-message" *ngIf="personalInfoForm.get('completeAddress')?.invalid && personalInfoForm.get('completeAddress')?.touched">
+                    {{ getErrorMessage(personalInfoForm, 'completeAddress') }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="label">
+                    City <span class="required">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    formControlName="city"
+                    class="input"
+                    placeholder="e.g., Mumbai"
+                    [class.error]="personalInfoForm.get('city')?.invalid && personalInfoForm.get('city')?.touched"
+                  />
+                  <span class="error-message" *ngIf="personalInfoForm.get('city')?.invalid && personalInfoForm.get('city')?.touched">
+                    {{ getErrorMessage(personalInfoForm, 'city') }}
+                  </span>
+                </div>
+
+                <div class="form-group">
+                  <label class="label">
+                    State <span class="required">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    formControlName="state"
+                    class="input"
+                    placeholder="e.g., Maharashtra"
+                    [class.error]="personalInfoForm.get('state')?.invalid && personalInfoForm.get('state')?.touched"
+                  />
+                  <span class="error-message" *ngIf="personalInfoForm.get('state')?.invalid && personalInfoForm.get('state')?.touched">
+                    {{ getErrorMessage(personalInfoForm, 'state') }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group full-width">
+                  <label class="label">
+                    PIN Code <span class="required">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    formControlName="pinCode"
+                    class="input"
+                    placeholder="400001"
+                    maxlength="6"
+                    [class.error]="personalInfoForm.get('pinCode')?.invalid && personalInfoForm.get('pinCode')?.touched"
+                  />
+                  <span class="error-message" *ngIf="personalInfoForm.get('pinCode')?.invalid && personalInfoForm.get('pinCode')?.touched">
+                    {{ getErrorMessage(personalInfoForm, 'pinCode') }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-actions center">
+                <button type="button" class="btn btn-primary btn-next" (click)="nextStep()">
+                  NEXT
+                  <span class="material-icons" aria-hidden="true">arrow_forward</span>
+                </button>
+              </div>
+
+              <a class="back-link" (click)="backToHome()">Back to home</a>
+            </form>
+          </div>
+
+          <div class="form-content" *ngIf="currentStep === 2">
+            <form [formGroup]="serviceProfileForm" class="form">
+              <div class="form-group full-width">
+                <label class="label">
+                  <span class="material-icons label-icon" aria-hidden="true">handyman</span>
+                  Services You Offer <span class="required">*</span>
+                </label>
+                <p class="helper-text">Select all services you can provide</p>
+                <div class="services-grid">
+                  <button
+                    type="button"
+                    *ngFor="let service of availableServices"
+                    class="service-card"
+                    [class.selected]="isServiceSelected(service.id)"
+                    (click)="toggleService(service.id)"
+                  >
+                    <span class="service-icon" aria-hidden="true">{{ service.icon }}</span>
+                    <span class="service-name">{{ service.name }}</span>
+                  </button>
+                </div>
+                <span class="error-message" *ngIf="selectedServices.length === 0 && serviceProfileForm.touched">
+                  Please select at least one service
+                </span>
+              </div>
+
+              <div class="form-group full-width">
+                <label class="label">
+                  <span class="material-icons label-icon" aria-hidden="true">schedule</span>
+                  Total Experience <span class="required">*</span>
+                </label>
+                <div class="experience-row">
+                  <div class="experience-field">
+                    <label class="experience-label">Years</label>
+                    <select formControlName="experienceYears" class="select">
+                      <option value="" disabled>Select years</option>
+                      <option *ngFor="let year of years" [value]="year">{{ year }}</option>
+                    </select>
+                  </div>
+                  <div class="experience-field">
+                    <label class="experience-label">Months</label>
+                    <select formControlName="experienceMonths" class="select">
+                      <option value="" disabled>Select months</option>
+                      <option *ngFor="let month of months" [value]="month">{{ month }}</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group full-width">
+                <label class="label">
+                  <span class="material-icons label-icon" aria-hidden="true">stars</span>
+                  Specializations
+                </label>
+                <p class="helper-text">Describe any specific skills or areas where you excel (optional)</p>
+                <textarea
+                  formControlName="specializations"
+                  class="textarea"
+                  rows="3"
+                  placeholder="E.g., Expert in deep cleaning, Experienced with traditional Indian cooking, Certified in first aid for elderly care."
+                ></textarea>
+              </div>
+
+              <div class="form-group full-width">
+                <label class="label">
+                  <span class="material-icons label-icon" aria-hidden="true">translate</span>
+                  Language Proficiency <span class="required">*</span>
+                </label>
+                <p class="helper-text">Select all languages you can speak</p>
+                <div class="chips-grid">
+                  <button
+                    type="button"
+                    *ngFor="let language of availableLanguages"
+                    class="chip"
+                    [class.selected]="isLanguageSelected(language)"
+                    (click)="toggleLanguage(language)"
+                  >
+                    {{ language }}
+                  </button>
+                </div>
+                <span class="error-message" *ngIf="selectedLanguages.length === 0 && serviceProfileForm.touched">
+                  Please select at least one language
+                </span>
+              </div>
+
+              <div class="form-group full-width">
+                <label class="label">
+                  <span class="material-icons label-icon" aria-hidden="true">school</span>
+                  Education Level <span class="required">*</span>
+                </label>
+                <div class="chips-grid">
+                  <button
+                    type="button"
+                    *ngFor="let level of availableEducationLevels"
+                    class="chip"
+                    [class.selected]="isEducationLevelSelected(level)"
+                    (click)="toggleEducationLevel(level)"
+                  >
+                    {{ level }}
+                  </button>
+                </div>
+                <span class="error-message" *ngIf="selectedEducationLevels.length === 0 && serviceProfileForm.touched">
+                  Please select at least one education level
+                </span>
+              </div>
+
+              <div class="form-group full-width">
+                <label class="label">
+                  <span class="material-icons label-icon" aria-hidden="true">event_available</span>
+                  Availability <span class="required">*</span>
+                </label>
+                <div class="availability-grid">
+                  <button
+                    type="button"
+                    *ngFor="let option of availabilityOptions"
+                    class="availability-card"
+                    [class.selected]="isAvailabilitySelected(option)"
+                    (click)="selectAvailability(option)"
+                  >
+                    <div class="availability-content">
+                      <span class="availability-title">{{ option.split('\n')[0] }}</span>
+                      <span class="availability-subtitle">{{ option.split('\n')[1] }}</span>
+                    </div>
+                  </button>
+                </div>
+                <span class="error-message" *ngIf="!selectedAvailability && serviceProfileForm.touched">
+                  Please select your availability
+                </span>
+              </div>
+
+              <div class="form-group full-width">
+                <label class="label">
+                  <span class="material-icons label-icon" aria-hidden="true">currency_rupee</span>
+                  Expected Hourly Rate <span class="required">*</span>
+                </label>
+                <div class="currency-input">
+                  <span class="currency-symbol">₹</span>
+                  <input
+                    type="number"
+                    formControlName="expectedHourlyRate"
+                    class="input currency-field"
+                    placeholder="Enter amount"
+                    min="1"
+                    [class.error]="serviceProfileForm.get('expectedHourlyRate')?.invalid && serviceProfileForm.get('expectedHourlyRate')?.touched"
+                  />
+                  <span class="currency-suffix">per hour</span>
+                </div>
+                <span class="error-message" *ngIf="serviceProfileForm.get('expectedHourlyRate')?.invalid && serviceProfileForm.get('expectedHourlyRate')?.touched">
+                  {{ getErrorMessage(serviceProfileForm, 'expectedHourlyRate') }}
+                </span>
+              </div>
+
+              <div class="form-group full-width">
+                <label class="label">
+                  <span class="material-icons label-icon" aria-hidden="true">edit_note</span>
+                  About Yourself (Optional)
+                </label>
+                <p class="helper-text">Share a brief introduction about yourself and your approach</p>
+                <textarea
+                  formControlName="aboutYourself"
+                  class="textarea"
+                  rows="3"
+                  placeholder="E.g., Customer-centric and efficient. I pride myself on reliability and will ensure your home is left tidy and welcoming."
+                ></textarea>
+              </div>
+
+              <div class="info-box profile-verification">
+                <span class="material-icons info-icon" aria-hidden="true">verified</span>
+                <div class="info-content">
+                  <strong>Profile Verification:</strong>
+                  <p>
+                    Your profile will be verified by our team within 24-48 hours. Accurate information helps you get hired faster and builds trust with customers.
+                  </p>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="button" class="btn btn-secondary" (click)="previousStep()">
+                  <span class="material-icons" aria-hidden="true">arrow_back</span>
+                  PREVIOUS
+                </button>
+                <button type="button" class="btn btn-primary" (click)="nextStep()">
+                  Submit Details for Verification
+                  <span class="material-icons" aria-hidden="true">arrow_forward</span>
+                </button>
+              </div>
+
+              <a class="back-link" (click)="backToHome()">Back to home</a>
+            </form>
+          </div>
+
+          <div class="form-content" *ngIf="currentStep === 3">
+            <div class="info-box data-privacy">
+              <span class="material-icons info-icon" aria-hidden="true">lock</span>
+              <div class="info-content">
+                <strong>Data Privacy:</strong>
+                <p>
+                  Your documents are encrypted and stored securely. We comply with all Indian data protection regulations. Your information will only be used for verification purposes.
+                </p>
+              </div>
+            </div>
+
+            <form [formGroup]="idVerificationForm" class="form">
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="label">Select ID Proof Type <span class="required">*</span></label>
+                  <select formControlName="idProofType" class="select">
+                    <option *ngFor="let type of idProofTypes" [value]="type">{{ type }}</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label class="label">
+                    <span class="material-icons label-icon" aria-hidden="true">badge</span>
+                    {{ idVerificationForm.get('idProofType')?.value }} Number <span class="required">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    formControlName="idNumber"
+                    class="input"
+                    placeholder="56721-234-5566"
+                    [class.error]="idVerificationForm.get('idNumber')?.invalid && idVerificationForm.get('idNumber')?.touched"
+                  />
+                  <span class="error-message" *ngIf="idVerificationForm.get('idNumber')?.invalid && idVerificationForm.get('idNumber')?.touched">
+                    {{ getErrorMessage(idVerificationForm, 'idNumber') }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-group full-width">
+                <label class="label">Upload Recent Photograph <span class="required">*</span></label>
+                <div class="upload-area">
+                  <input
+                    type="file"
+                    #fileInput
+                    accept="image/jpeg,image/png"
+                    (change)="onFileSelected($event)"
+                    class="file-input"
+                  />
+                  <div class="upload-content" (click)="fileInput.click()" role="button" tabindex="0">
+                    <span class="material-icons upload-icon" aria-hidden="true">file_upload</span>
+                    <p class="upload-text">{{ selectedFileName || 'Upload a clear photo of yourself' }}</p>
+                    <p class="upload-hint">JPG or PNG (Max 5MB)</p>
+                  </div>
+                </div>
+                <p class="helper-text">This will be used for face matching with your ID document</p>
+                <span class="error-message" *ngIf="idVerificationForm.get('photograph')?.invalid && idVerificationForm.get('photograph')?.touched">
+                  Please upload a photograph
+                </span>
+              </div>
+
+              <div class="form-actions">
+                <button type="button" class="btn btn-secondary" (click)="previousStep()">
+                  <span class="material-icons" aria-hidden="true">arrow_back</span>
+                  PREVIOUS
+                </button>
+                <button type="button" class="btn btn-primary" (click)="onSubmit()" [disabled]="loading$ | async">
+                  <span *ngIf="!(loading$ | async)">
+                    Submit
+                    <span class="material-icons" aria-hidden="true">arrow_forward</span>
+                  </span>
+                  <span *ngIf="loading$ | async">Submitting...</span>
+                </button>
+              </div>
+
+              <a class="back-link" (click)="backToHome()">Back to home</a>
+            </form>
+          </div>
+
           <div class="alert alert-error" *ngIf="error$ | async as error">
             {{ error }}
           </div>
-
-          <!-- Submit Button -->
-          <button type="submit" class="btn-submit" [disabled]="loading$ | async">
-            <span *ngIf="!(loading$ | async)">REGISTER AS EXPERT</span>
-            <span *ngIf="loading$ | async">REGISTERING...</span>
-          </button>
-
-          <!-- Terms -->
-          <p class="terms">
-            By registering, you agree to our 
-            <a href="#" class="link">Terms of Service</a> and 
-            <a href="#" class="link">Privacy Policy</a>
-          </p>
-
-          <!-- Back to Home -->
-          <a routerLink="/" class="back-link">Back to home</a>
-        </form>
-      </div>
-
-      <div class="register-right">
-        <div class="illustration">
-          <div class="expert-tools">🔧⚡🏠</div>
-          <h3>Start Earning Today!</h3>
-          <ul class="benefits-list">
-            <li>Flexible working hours</li>
-            <li>Competitive earnings</li>
-            <li>Growing customer base</li>
-            <li>Professional support</li>
-          </ul>
-        </div>
+        </section>
       </div>
     </div>
-  </div>
+  </main>
 </div>
