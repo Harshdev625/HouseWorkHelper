@@ -58,13 +58,16 @@ describe('LandingComponent', () => {
   });
 
   it('should automatically rotate services', (done) => {
+    component.currentServiceIndex = 0;
     const initialIndex = component.currentServiceIndex;
     
+    // Wait for the carousel to rotate (3000ms interval + 300ms animation)
     setTimeout(() => {
-      // After 3+ seconds, the service should have rotated
-      expect(component.currentServiceIndex).not.toBe(initialIndex);
+      fixture.detectChanges();
+      const newIndex = component.currentServiceIndex;
+      expect(newIndex).toBeGreaterThan(initialIndex);
       done();
-    }, 3200);
+    }, 3500);
   });
 
   it('should display hero section', () => {

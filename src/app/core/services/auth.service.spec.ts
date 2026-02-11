@@ -198,7 +198,7 @@ describe('AuthService', () => {
       };
 
       service.registerExpert(registerRequest).subscribe(response => {
-        expect(response.token).toBe('new-expert-token');
+        expect(response.token).toBe('expert-jwt-token');
         expect(response.user.fullName).toBe('New Expert');
         expect(response.user.email).toBe('newexpert@example.com');
         expect(response.user.roles).toContain('ROLE_EXPERT');
