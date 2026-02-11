@@ -1,0 +1,94 @@
+<div class="dashboard-container">
+  <!-- Header -->
+  <header class="header">
+    <div class="header-content">
+      <div class="logo">
+        <span class="logo-icon material-icons">home_work</span>
+        <span class="logo-text">HouseMate</span>
+      </div>
+
+      <nav class="nav">
+        <a class="nav-link active">Services</a>
+        <a class="nav-link">My Bookings</a>
+      </nav>
+
+      <div class="user-menu" *ngIf="user$ | async as user">
+        <span class="user-name">{{ user.fullName }}</span>
+        <div class="user-avatar">
+          <span class="material-icons">person</span>
+        </div>
+        <button class="logout-btn" (click)="onLogout()">
+          <span class="material-icons">logout</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Book Service CTA -->
+    <section class="book-service-section">
+      <div class="book-service-card">
+        <div class="book-service-content">
+          <h2 class="book-service-title">Need a service?</h2>
+          <p class="book-service-subtitle">Book trusted experts for your home</p>
+          <button class="btn-book-service">
+            <span>BOOK SERVICE</span>
+            <span class="material-icons">arrow_forward</span>
+          </button>
+        </div>
+        <div class="book-service-icon">
+          <span class="material-icons">home_repair_service</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Upcoming Bookings -->
+    <section class="bookings-section">
+      <div class="section-header">
+        <h2 class="section-title">Upcoming Bookings</h2>
+        <button class="btn-view-all">
+          <span>View All</span>
+          <span class="material-icons">arrow_forward</span>
+        </button>
+      </div>
+
+      <div class="empty-state" *ngIf="upcomingBookings.length === 0">
+        <span class="material-icons empty-icon">event_busy</span>
+        <h3 class="empty-title">No Upcoming Bookings</h3>
+        <p class="empty-description">You haven't booked any services yet</p>
+        <button class="btn-primary">
+          <span>Book Your First Service</span>
+          <span class="material-icons">arrow_forward</span>
+        </button>
+      </div>
+
+      <!-- Booking cards will be shown when there are bookings -->
+      <div class="bookings-grid" *ngIf="upcomingBookings.length > 0">
+        <div class="booking-card" *ngFor="let booking of upcomingBookings">
+          <!-- Booking card content -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Popular Services -->
+    <section class="services-section">
+      <div class="section-header">
+        <h2 class="section-title">Popular Services</h2>
+      </div>
+
+      <div class="services-grid">
+        <div class="service-card" *ngFor="let service of services">
+          <div class="service-icon">
+            <span class="material-icons">{{ service.icon }}</span>
+          </div>
+          <h3 class="service-name">{{ service.name }}</h3>
+          <button class="btn-service">
+            <span>Book Now</span>
+            <span class="material-icons">arrow_forward</span>
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>

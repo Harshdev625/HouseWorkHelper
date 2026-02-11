@@ -1,0 +1,151 @@
+<div class="register-container">
+  <div class="register-card">
+    <div class="register-header">
+      <div class="logo">
+        <span class="logo-icon material-icons">home_work</span>
+        <span class="logo-text">HouseMate</span>
+      </div>
+    </div>
+
+    <div class="register-content">
+      <div class="register-left">
+        <h2 class="title">Become an Expert</h2>
+        <h1 class="main-title">JOIN OUR TEAM!</h1>
+        <p class="subtitle">
+          Share your skills and earn money by providing trusted home services.
+          Build your reputation and grow your business.
+        </p>
+
+        <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()" class="form">
+          <!-- Full Name -->
+          <div class="form-group">
+            <label class="label">
+              <span class="material-icons label-icon">person</span>
+              Full Name
+            </label>
+            <input
+              type="text"
+              formControlName="fullName"
+              class="input"
+              placeholder="e.g., John Doe"
+              [class.error]="registrationForm.get('fullName')?.invalid && registrationForm.get('fullName')?.touched"
+            />
+            <span class="error-message" *ngIf="registrationForm.get('fullName')?.invalid && registrationForm.get('fullName')?.touched">
+              {{ getErrorMessage('fullName') }}
+            </span>
+          </div>
+
+          <!-- Mobile Number -->
+          <div class="form-group">
+            <label class="label">
+              <span class="material-icons label-icon">phone</span>
+              Mobile Number
+            </label>
+            <input
+              type="tel"
+              formControlName="phone"
+              class="input"
+              placeholder="e.g., 9876543210"
+              [class.error]="registrationForm.get('phone')?.invalid && registrationForm.get('phone')?.touched"
+            />
+            <span class="error-message" *ngIf="registrationForm.get('phone')?.invalid && registrationForm.get('phone')?.touched">
+              {{ getErrorMessage('phone') }}
+            </span>
+          </div>
+
+          <!-- Email -->
+          <div class="form-group">
+            <label class="label">
+              <span class="material-icons label-icon">email</span>
+              Email
+            </label>
+            <input
+              type="email"
+              formControlName="email"
+              class="input"
+              placeholder="e.g., john@example.com"
+              [class.error]="registrationForm.get('email')?.invalid && registrationForm.get('email')?.touched"
+            />
+            <span class="error-message" *ngIf="registrationForm.get('email')?.invalid && registrationForm.get('email')?.touched">
+              {{ getErrorMessage('email') }}
+            </span>
+          </div>
+
+          <!-- Password -->
+          <div class="form-group">
+            <label class="label">
+              <span class="material-icons label-icon">lock</span>
+              Password
+            </label>
+            <input
+              type="password"
+              formControlName="password"
+              class="input"
+              placeholder="Enter strong password"
+              [class.error]="registrationForm.get('password')?.invalid && registrationForm.get('password')?.touched"
+            />
+            <span class="error-message" *ngIf="registrationForm.get('password')?.invalid && registrationForm.get('password')?.touched">
+              {{ getErrorMessage('password') }}
+            </span>
+          </div>
+
+          <!-- Skills Selection -->
+          <div class="form-group">
+            <label class="label">
+              <span class="material-icons label-icon">build</span>
+              Select Your Skills
+            </label>
+            <div class="skills-grid">
+              <button
+                type="button"
+                *ngFor="let skill of availableSkills"
+                class="skill-chip"
+                [class.selected]="isSkillSelected(skill)"
+                (click)="toggleSkill(skill)"
+              >
+                {{ skill }}
+              </button>
+            </div>
+            <span class="error-message" *ngIf="selectedSkills.length === 0 && registrationForm.touched">
+              Please select at least one skill
+            </span>
+          </div>
+
+          <!-- Error Message -->
+          <div class="alert alert-error" *ngIf="error$ | async as error">
+            {{ error }}
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" class="btn-submit" [disabled]="loading$ | async">
+            <span *ngIf="!(loading$ | async)">REGISTER AS EXPERT</span>
+            <span *ngIf="loading$ | async">REGISTERING...</span>
+          </button>
+
+          <!-- Terms -->
+          <p class="terms">
+            By registering, you agree to our 
+            <a href="#" class="link">Terms of Service</a> and 
+            <a href="#" class="link">Privacy Policy</a>
+          </p>
+
+          <!-- Back to Home -->
+          <a routerLink="/" class="back-link">Back to home</a>
+        </form>
+      </div>
+
+      <div class="register-right">
+        <div class="illustration">
+          <div class="expert-tools">🔧⚡🏠</div>
+          <h3>Start Earning Today!</h3>
+          <ul class="benefits-list">
+            <li>Flexible working hours</li>
+            <li>Competitive earnings</li>
+            <li>Growing customer base</li>
+            <li>Professional support</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,107 @@
+<div class="landing-container">
+  <!-- Header -->
+  <header class="header">
+    <div class="header-content">
+      <div class="logo">
+        <span class="logo-icon material-icons">home_work</span>
+        <span class="logo-text">HouseMate</span>
+      </div>
+      <nav class="nav-links">
+        <a routerLink="/login/customer" class="nav-link">Customer Login</a>
+        <a routerLink="/login/expert" class="nav-link">Expert Login</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="content-grid">
+      <!-- Left Section - Hero -->
+      <section class="left-section">
+        <div class="hero-content">
+          <p class="hero-subtitle">ON DEMAND</p>
+          <h1 class="hero-title">TRUSTED HOME SERVICES</h1>
+          <p class="hero-description">
+            Connect with verified, trained home-service experts for ASAP or scheduled services. 
+            Fast, transparent, and reliable.
+          </p>
+
+          <!-- Service Chip (shows current service like Cleaning) -->
+          <div class="service-chip" [class.animate]="isAnimating">
+            <span class="service-name">{{ currentService.name }}</span>
+          </div>
+
+          <!-- CTA -->
+          <div class="cta-buttons">
+            <button class="btn btn-primary" routerLink="/register/customer">
+              BOOK SERVICE →
+            </button>
+            <button class="btn btn-secondary" routerLink="/register/expert">
+              BECOME AN EXPERT
+            </button>
+          </div>
+        </div>
+
+        <!-- Hero Illustration (large animated character) -->
+        <div class="hero-illustration">
+          <div class="service-illustration">
+            <img [src]="currentService.image" alt="{{ currentService.name }} service illustration" class="service-image" />
+          </div>
+          <!-- Optional: animated tools like in mockup -->
+          <div class="cleaning-tools">
+            <div class="tool mop"></div>
+            <div class="tool bucket"></div>
+            <div class="tool brush"></div>
+          </div>
+        </div>
+
+        <!-- Scroll indicator -->
+        <div class="scroll-indicator">
+          <span class="material-icons">expand_more</span>
+          <span>Scroll</span>
+        </div>
+      </section>
+
+      <!-- Right Section - Why Choose -->
+      <section class="right-section">
+        <div class="why-choose">
+          <h2 class="section-title">Why choose <span class="highlight">HouseMate</span></h2>
+
+          <div class="benefits-grid">
+            <div class="benefit-card" *ngFor="let benefit of benefits">
+              <div class="benefit-icon">
+                <span class="material-icons">{{ benefit.icon }}</span>
+              </div>
+              <h3 class="benefit-title">{{ benefit.title }}</h3>
+              <p class="benefit-description">{{ benefit.description }}</p>
+            </div>
+          </div>
+
+          <!-- Ready to Get Started -->
+          <div class="ready-section">
+            <h3 class="ready-title">Ready to Get Started?</h3>
+            <p class="ready-subtitle">Join thousands of satisfied customers and expert providers</p>
+
+            <div class="ready-buttons">
+              <button class="btn btn-primary" routerLink="/register/customer">
+                BOOK SERVICE →
+              </button>
+              <button class="btn btn-secondary" routerLink="/register/expert">
+                BECOME AN EXPERT
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <button class="footer-btn" routerLink="/register/customer">Book Service</button>
+      <button class="footer-btn" routerLink="/register/expert">Become an Expert</button>
+    </div>
+    <p class="copyright">© 2026 HouseMate. All rights reserved.</p>
+  </footer>
+</div>

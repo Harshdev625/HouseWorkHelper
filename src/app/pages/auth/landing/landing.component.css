@@ -1,0 +1,338 @@
+/* Container */
+.landing-container {
+  min-height: 100vh;
+  background: #f8f9fa;
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header - kept same */
+.header {
+  padding: 1.5rem 2rem;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #1e40af;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.logo-icon {
+  font-size: 2rem;
+  background: #1e40af;
+  color: white;
+  border-radius: 8px;
+  padding: 0.25rem;
+}
+
+.nav-links {
+  display: flex;
+  gap: 2rem;
+}
+
+.nav-link {
+  color: #64748b;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  transition: all 0.3s;
+}
+
+.nav-link:hover {
+  color: #1e40af;
+  background: #eff6ff;
+}
+
+/* Main Content Wrapper */
+.main-content {
+  width: 100%;
+  flex: 1; /* Pushes footer down */
+}
+
+/* CRITICAL CHANGE: 
+   Removed grid-template-columns. 
+   Now it stacks naturally (block layout).
+*/
+.content-grid {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* --- Hero Section (Formerly Left Section) --- */
+.left-section {
+  background: white; /* Changed from transparent to white for the hero look */
+  padding: 5rem 2rem;
+  display: flex;
+  flex-direction: row; /* Keep content and image side-by-side within the hero */
+  align-items: center;
+  justify-content: center;
+  gap: 4rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.hero-content {
+  max-width: 600px;
+  text-align: left;
+}
+
+.hero-subtitle {
+  color: #64748b;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+}
+
+.hero-title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  line-height: 1.2;
+  color: #1e40af;
+  margin-bottom: 1.5rem;
+}
+
+.hero-description {
+  color: #64748b;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  max-width: 90%;
+}
+
+/* Service Chip */
+.service-chip {
+  display: inline-flex;
+  align-items: center;
+  background: #1e40af;
+  color: white;
+  padding: 0.5rem 1.25rem;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 2rem;
+  position: absolute; /* Position relative to illustration */
+  top: 20px;
+  right: 20px;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
+}
+
+.hero-illustration {
+  position: relative;
+  width: 450px;
+  height: 450px;
+  flex-shrink: 0;
+}
+
+.service-illustration {
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+}
+
+.service-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Changed to contain so the character isn't cropped */
+}
+
+/* Buttons */
+.cta-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.btn {
+  padding: 0.875rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: #1e40af;
+  color: white;
+  border: none;
+}
+
+.btn-secondary {
+  background: #f1f5f9;
+  color: #1e40af;
+  border: 1px solid #cbd5e1;
+}
+
+/* Scroll Indicator (Hidden for top-bottom layout usually, but optional) */
+.scroll-indicator {
+  display: none; 
+}
+
+/* --- Features Section (Formerly Right Section) --- */
+.right-section {
+  background: #f8fafc; /* Light gray background to differentiate sections */
+  padding: 5rem 2rem;
+  margin-top: 0; /* Remove margin */
+  width: 100%;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.why-choose {
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.section-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 4rem;
+}
+
+.highlight {
+  color: #1e40af;
+}
+
+/* Grid for the cards */
+.benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 columns side by side */
+  gap: 2rem;
+  margin-bottom: 4rem;
+}
+
+.benefit-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.benefit-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.benefit-icon {
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  color: #1e40af;
+}
+
+.benefit-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0.75rem;
+}
+
+.benefit-description {
+  color: #64748b;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+/* Ready Section */
+.ready-section {
+  background: white;
+  padding: 3rem;
+  border-radius: 20px;
+  margin-top: 2rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+/* Footer */
+.footer {
+  background: white;
+  padding: 2rem;
+  text-align: center;
+  border-top: 1px solid #e2e8f0;
+  margin-top: auto;
+}
+
+.copyright {
+  color: #94a3b8;
+  font-size: 0.875rem;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .left-section {
+    flex-direction: column-reverse;
+    text-align: center;
+    padding: 3rem 1.5rem;
+  }
+  
+  .hero-content {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .benefits-grid {
+    grid-template-columns: repeat(2, 1fr); /* 2x2 on tablets */
+  }
+  
+  .hero-illustration {
+    width: 300px;
+    height: 300px;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-title {
+    font-size: 2.5rem;
+  }
+  
+  .benefits-grid {
+    grid-template-columns: 1fr; /* Stack cards on mobile */
+  }
+  
+  .cta-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
