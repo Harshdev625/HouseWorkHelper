@@ -1,94 +1,176 @@
 <div class="dashboard-container">
-  <!-- Header -->
   <header class="header">
-    <div class="header-content">
-      <div class="logo">
-        <span class="logo-icon material-icons">home_work</span>
+    <div class="header-bar">
+      <div class="logo" aria-label="HouseMate">
+        <span class="logo-badge" aria-hidden="true">H</span>
         <span class="logo-text">HouseMate</span>
       </div>
 
-      <nav class="nav">
-        <a class="nav-link active">Services</a>
-        <a class="nav-link">My Bookings</a>
+      <nav class="nav" aria-label="Customer Navigation">
+        <a class="nav-link active" [routerLink]="['/customer/book-service']">Services</a>
+        <a class="nav-link" [routerLink]="['/customer/bookings']">My Bookings</a>
       </nav>
 
-      <div class="user-menu" *ngIf="user$ | async as user">
-        <span class="user-name">{{ user.fullName }}</span>
-        <div class="user-avatar">
+      <div class="user" *ngIf="user$ | async as user">
+        <div class="user-avatar" aria-hidden="true">
           <span class="material-icons">person</span>
         </div>
-        <button class="logout-btn" (click)="onLogout()">
+        <span class="user-name">{{ user.fullName }}</span>
+        <span class="material-icons user-caret" aria-hidden="true">expand_more</span>
+        <button class="logout-btn" type="button" (click)="onLogout()" aria-label="Logout">
           <span class="material-icons">logout</span>
         </button>
       </div>
     </div>
   </header>
 
-  <!-- Main Content -->
-  <main class="main-content">
-    <!-- Book Service CTA -->
-    <section class="book-service-section">
-      <div class="book-service-card">
-        <div class="book-service-content">
-          <h2 class="book-service-title">Need a service?</h2>
-          <p class="book-service-subtitle">Book trusted experts for your home</p>
-          <button class="btn-book-service">
-            <span>BOOK SERVICE</span>
-            <span class="material-icons">arrow_forward</span>
-          </button>
-        </div>
-        <div class="book-service-icon">
-          <span class="material-icons">home_repair_service</span>
-        </div>
+  <main class="main">
+    <section class="hero" *ngIf="user$ | async as user">
+      <div class="hero-left">
+        <p class="welcome">Welcome back,</p>
+        <h1 class="hero-name">{{ user.fullName | uppercase }}!</h1>
+      </div>
+      <div class="hero-right">
+        <button class="btn-book" type="button" [routerLink]="['/customer/book-service']">
+          BOOK SERVICE
+          <span class="material-icons" aria-hidden="true">arrow_forward</span>
+        </button>
       </div>
     </section>
 
-    <!-- Upcoming Bookings -->
-    <section class="bookings-section">
-      <div class="section-header">
-        <h2 class="section-title">Upcoming Bookings</h2>
-        <button class="btn-view-all">
-          <span>View All</span>
-          <span class="material-icons">arrow_forward</span>
-        </button>
-      </div>
+    <section class="section">
+      <h2 class="section-title">Upcoming Bookings</h2>
 
-      <div class="empty-state" *ngIf="upcomingBookings.length === 0">
-        <span class="material-icons empty-icon">event_busy</span>
-        <h3 class="empty-title">No Upcoming Bookings</h3>
-        <p class="empty-description">You haven't booked any services yet</p>
-        <button class="btn-primary">
-          <span>Book Your First Service</span>
-          <span class="material-icons">arrow_forward</span>
-        </button>
-      </div>
+      <div class="bookings" *ngIf="upcomingBookings.length > 0">
+        <div class="booking-list" role="list">
+          <article class="booking-card" role="listitem" *ngFor="let booking of upcomingBookings">
+            <div class="booking-top">
+              <div class="booking-icon" aria-hidden="true">
+                <span class="material-icons">cleaning_services</span>
+              </div>
+              <div class="pay-chip">{{ booking.amountChipLabel }}</div>
+            </div>
 
-      <!-- Booking cards will be shown when there are bookings -->
-      <div class="bookings-grid" *ngIf="upcomingBookings.length > 0">
-        <div class="booking-card" *ngFor="let booking of upcomingBookings">
-          <!-- Booking card content -->
+            <h3 class="booking-date">{{ booking.dateLabel }}</h3>
+
+            <div class="booking-meta">
+              <div class="meta-row">
+                <span class="material-icons meta-icon" aria-hidden="true">schedule</span>
+                <span>{{ booking.timeLabel }}</span>
+              </div>
+              <div class="meta-row">
+                <span class="material-icons meta-icon" aria-hidden="true">location_on</span>
+                <span>{{ booking.addressLabel }}</span>
+              </div>
+            </div>
+
+            <div class="booking-actions">
+              <a class="booking-link" [routerLink]="['/customer/bookings', booking.id]">View Details</a>
+              <a class="booking-link" href="javascript:void(0)">Modify Booking</a>
+            </div>
+          </article>
         </div>
+
+        <button class="bookings-next" type="button" aria-label="Next bookings">
+          <span class="material-icons" aria-hidden="true">chevron_right</span>
+        </button>
+      </div>
+
+      <div class="empty" *ngIf="upcomingBookings.length === 0">
+        <p class="empty-text">No bookings yet.</p>
       </div>
     </section>
 
-    <!-- Popular Services -->
-    <section class="services-section">
-      <div class="section-header">
-        <h2 class="section-title">Popular Services</h2>
-      </div>
+    <section class="section">
+      <h2 class="section-title">Popular Services</h2>
 
-      <div class="services-grid">
-        <div class="service-card" *ngFor="let service of services">
-          <div class="service-icon">
-            <span class="material-icons">{{ service.icon }}</span>
+      <div class="popular" role="list">
+        <div class="popular-card" role="listitem" *ngFor="let service of popularServices">
+          <div class="popular-illustration" aria-hidden="true">
+            <img class="popular-icon" [src]="service.iconUrl" [alt]="service.name" loading="lazy" />
           </div>
-          <h3 class="service-name">{{ service.name }}</h3>
-          <button class="btn-service">
-            <span>Book Now</span>
-            <span class="material-icons">arrow_forward</span>
+          <div class="popular-name">{{ service.name }}</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Featured Services</h2>
+
+      <div class="featured" *ngIf="!featuredLoading && featuredServices.length > 0">
+        <div class="featured-grid" role="list">
+          <article class="featured-card" role="listitem" *ngFor="let svc of featuredServices">
+            <div class="featured-media">
+              <img class="featured-img" [src]="svc.imageUrl" [alt]="svc.name" loading="lazy" />
+              <div class="featured-rate">₹ {{ svc.hourlyRateInr }}/hr</div>
+            </div>
+
+            <div class="featured-body">
+              <h3 class="featured-title">{{ svc.name }}</h3>
+              <p class="featured-desc">{{ svc.description }}</p>
+              <p class="featured-offer">Extra 15% off on new booking for a month</p>
+              <button class="featured-btn" type="button">BOOK SERVICE</button>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <div class="empty" *ngIf="featuredLoading">
+        <p class="empty-text">Loading services...</p>
+      </div>
+      <div class="empty" *ngIf="!featuredLoading && featuredServices.length === 0">
+        <p class="empty-text">No featured services available.</p>
+      </div>
+      <div class="empty" *ngIf="featuredError">
+        <p class="empty-text">{{ featuredError }}</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">FAQs</h2>
+
+      <div class="faq" role="list">
+        <div class="faq-item" role="listitem" *ngFor="let faq of faqs; let i = index">
+          <button class="faq-q" type="button" (click)="toggleFaq(i)">
+            <span class="faq-question">{{ faq.question }}</span>
+            <span class="faq-icon" aria-hidden="true">{{ faq.expanded ? '−' : '+' }}</span>
           </button>
+          <div class="faq-a" *ngIf="faq.expanded">
+            <p class="faq-answer">{{ faq.answer }}</p>
+          </div>
         </div>
       </div>
     </section>
   </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h3 class="footer-title">About Modimal</h3>
+          <a class="footer-link" href="javascript:void(0)">Privacy Policy</a>
+          <a class="footer-link" href="javascript:void(0)">Support System</a>
+          <a class="footer-link" href="javascript:void(0)">Terms &amp; Condition</a>
+          <a class="footer-link" href="javascript:void(0)">Copyright Notice</a>
+        </div>
+
+        <div class="footer-col">
+          <h3 class="footer-title">Help &amp; Support</h3>
+          <a class="footer-link" href="javascript:void(0)">Orders &amp; Shipping</a>
+          <a class="footer-link" href="javascript:void(0)">Returns &amp; Refunds</a>
+          <a class="footer-link" href="javascript:void(0)">FAQs</a>
+          <a class="footer-link" href="javascript:void(0)">Contact Us</a>
+        </div>
+
+        <div class="footer-col">
+          <h3 class="footer-title">Join Up</h3>
+          <a class="footer-link" href="javascript:void(0)">Join As Expert</a>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span class="footer-copy">© 2023 HouseMate. All Rights Reserved.</span>
+      </div>
+    </div>
+  </footer>
 </div>

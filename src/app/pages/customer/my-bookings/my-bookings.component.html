@@ -1,0 +1,27 @@
+<div class="wrap">
+  <div class="top">
+    <button class="btn secondary" type="button" (click)="back()">Back</button>
+    <h1 class="title">My Bookings</h1>
+  </div>
+
+  <div class="state" *ngIf="loading">Loading…</div>
+  <div class="state" *ngIf="error && !loading">{{ error }}</div>
+
+  <div class="list" *ngIf="!loading && bookings.length">
+    <article class="card" *ngFor="let b of bookings">
+      <div class="row">
+        <div class="name">{{ getServiceName(b.serviceId) }}</div>
+        <div class="status" [class.pending]="b.status==='PENDING_PAYMENT'" [class.done]="b.status==='COMPLETED'">{{ b.status }}</div>
+      </div>
+      <div class="meta">{{ b.bookingType }} • {{ b.durationMinutes }} mins</div>
+      <div class="meta" *ngIf="b.scheduledStartTime">Scheduled: {{ b.scheduledStartTime | date:'medium' }}</div>
+      <div class="meta">Address: {{ getAddressLabel(b.addressId) }}</div>
+      <div class="row bottom">
+        <div class="amt">₹{{ b.quotedAmount }}</div>
+        <button class="btn" type="button" (click)="openDetails(b.id)">View Details</button>
+      </div>
+    </article>
+  </div>
+
+  <div class="state" *ngIf="!loading && bookings.length === 0">No bookings yet.</div>
+</div>

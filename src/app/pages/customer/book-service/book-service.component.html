@@ -1,0 +1,375 @@
+<div class="page">
+  <header class="top">
+    <div class="top-inner">
+      <div class="brand" (click)="router.navigate(['/customer/dashboard'])" role="button" tabindex="0">
+        <span class="brand-badge">H</span>
+        <span class="brand-text">HouseMate</span>
+      </div>
+
+      <div class="top-actions">
+        <button class="link" type="button" (click)="router.navigate(['/customer/dashboard'])">Dashboard</button>
+        <button class="link" type="button" (click)="router.navigate(['/customer/bookings'])">My Bookings</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="content">
+    <div class="stepper">
+      <div class="step" [class.active]="step === 1"><span class="dot">1</span> Select Service & Expert</div>
+      <div class="step" [class.active]="step === 2"><span class="dot">2</span> Date & Time</div>
+      <div class="step" [class.active]="step === 3"><span class="dot">3</span> Address Details</div>
+      <div class="step" [class.active]="step === 4"><span class="dot">4</span> Review & Coupons</div>
+    </div>
+
+    <div class="card">
+      <div class="state" *ngIf="loading">
+        <p class="muted">Loading…</p>
+      </div>
+      <div class="state" *ngIf="error && !loading">
+        <p class="muted">{{ error }}</p>
+      </div>
+
+      <!-- STEP 1 -->
+      <section *ngIf="step === 1 && !loading">
+        <div class="row">
+          <h1 class="title">Book Service</h1>
+          <div class="zone">
+            <label class="label">Zone</label>
+            <select class="select" [(ngModel)]="selectedZoneId">
+              <option [ngValue]="null">Select zone</option>
+              <option *ngFor="let z of zones" [ngValue]="z.id">{{ z.name }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-head">
+            <h2 class="h">Select Service</h2>
+            <input class="input" placeholder="Search services…" [(ngModel)]="serviceSearch" />
+          </div>
+
+          <div class="carousel" role="list">
+            <button
+              class="svc"
+              role="listitem"
+              *ngFor="let svc of filteredServices"
+              type="button"
+              [class.selected]="svc.id === selectedServiceId"
+              (click)="selectService(svc)"
+            >
+              <div class="svc-name">{{ svc.name }}</div>
+              <div class="svc-sub">₹{{ svc.startingPrice }} starting</div>
+            </button>
+          </div>
+
+          <div class="addons" *ngIf="selectedService?.addons?.length">
+            <div class="addons-title">Add-ons</div>
+            <label class="addon" *ngFor="let a of selectedService!.addons">
+              <input type="checkbox" [checked]="selectedAddonIds.includes(a.id)" (change)="toggleAddon(a.id)" />
+              <span>{{ a.name }}</span>
+              <span class="addon-price">+₹{{ a.priceDelta }}</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-head">
+            <h2 class="h">Experts Near You</h2>
+            <input class="input" placeholder="Search experts…" [(ngModel)]="expertSearch" />
+          </div>
+
+          <div class="experts" role="list">
+            <button
+              class="expert"
+              role="listitem"
+              *ngFor="let e of expertCards"
+              type="button"
+              [class.selected]="e.id === selectedExpertId"
+              (click)="selectExpert(e.id)"
+            >
+              <div class="expert-top">
+                <div class="expert-name">{{ e.fullName }}</div>
+                <div class="badge" *ngIf="e.status === 'APPROVED'">Verified</div>
+              </div>
+              <div class="expert-meta">
+                <span class="meta">⭐ {{ e.rating }} ({{ e.totalJobs }})</span>
+                <span class="meta" *ngIf="e.onlineStatus === 'ONLINE'">Online</span>
+                <span class="meta" *ngIf="e.onlineStatus !== 'ONLINE'">Offline</span>
+              </div>
+              <div class="tags">
+                <span class="tag" *ngFor="let s of e.skills | slice:0:4">{{ s }}</span>
+              </div>
+              <div class="expert-rate" *ngIf="selectedService">{{ hourlyRateLabel }}</div>
+              <div class="expert-link">View Certificates</div>
+            </button>
+          </div>
+
+          <div class="empty" *ngIf="expertCards.length === 0">
+            No experts found for this service.
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn secondary" type="button" (click)="back()">Back</button>
+          <button class="btn" type="button" (click)="next()" [disabled]="!selectedServiceId || !selectedExpertId">Next</button>
+        </div>
+      </section>
+
+      <!-- STEP 2 -->
+      <section *ngIf="step === 2 && !loading">
+        <h2 class="h">Select Date & Time</h2>
+
+        <div class="toggle">
+          <button class="pill" type="button" [class.active]="bookingType === 'ASAP'" (click)="setBookingType('ASAP')">ASAP</button>
+          <button class="pill" type="button" [class.active]="bookingType === 'SCHEDULED'" (click)="setBookingType('SCHEDULED')">Scheduled</button>
+        </div>
+
+        <div class="grid" *ngIf="bookingType === 'SCHEDULED'">
+          <div>
+            <div class="label">Date (up to 4 days)</div>
+            <select class="select" [(ngModel)]="selectedDate">
+              <option [ngValue]="null">Select date</option>
+              <option *ngFor="let d of dateOptions" [ngValue]="d">{{ d }}</option>
+            </select>
+          </div>
+          <div>
+            <div class="label">Time Slot</div>
+            <select class="select" [(ngModel)]="selectedTimeSlot">
+              <option [ngValue]="null">Select slot</option>
+              <option *ngFor="let t of timeSlots" [ngValue]="t">{{ t }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div>
+            <div class="label">Duration</div>
+            <select class="select" [(ngModel)]="durationMinutes">
+              <option [ngValue]="null">Select duration</option>
+              <option [ngValue]="60">1 hour</option>
+              <option [ngValue]="120">2 hours</option>
+              <option [ngValue]="180">3 hours</option>
+            </select>
+          </div>
+          <div>
+            <div class="label">Frequency</div>
+            <select class="select" [ngModel]="frequency" disabled>
+              <option value="ONCE">Once</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn secondary" type="button" (click)="back()">Previous</button>
+          <button
+            class="btn"
+            type="button"
+            (click)="next()"
+            [disabled]="!durationMinutes || (bookingType==='SCHEDULED' && (!selectedDate || !selectedTimeSlot))"
+          >
+            Next
+          </button>
+        </div>
+      </section>
+
+      <!-- STEP 3 -->
+      <section *ngIf="step === 3 && !loading">
+        <div class="row">
+          <h2 class="h">Address Details</h2>
+          <button class="btn small" type="button" (click)="showAddAddress = !showAddAddress">Add New Address</button>
+        </div>
+
+        <div class="addr" role="list">
+          <button
+            class="addr-card"
+            role="listitem"
+            *ngFor="let a of addresses"
+            type="button"
+            [class.selected]="a.id === selectedAddressId"
+            (click)="selectAddress(a.id)"
+          >
+            <div class="addr-top">
+              <div class="addr-label">{{ a.label }}</div>
+              <div class="addr-default" *ngIf="a.isDefault">Default</div>
+            </div>
+            <div class="addr-lines">{{ a.line1 }} {{ a.line2 }}</div>
+            <div class="addr-lines">{{ a.city }}, {{ a.state }} - {{ a.postalCode }}</div>
+          </button>
+        </div>
+
+        <div class="empty" *ngIf="addresses.length === 0">
+          No saved addresses.
+        </div>
+
+        <div class="add-form" *ngIf="showAddAddress">
+          <div class="grid">
+            <div>
+              <div class="label">Label</div>
+              <input class="input" [(ngModel)]="newAddress.label" />
+            </div>
+            <div>
+              <div class="label">Postal Code</div>
+              <input class="input" [(ngModel)]="newAddress.postalCode" />
+            </div>
+          </div>
+          <div>
+            <div class="label">Address Line 1</div>
+            <input class="input" [(ngModel)]="newAddress.line1" />
+          </div>
+          <div>
+            <div class="label">Address Line 2</div>
+            <input class="input" [(ngModel)]="newAddress.line2" />
+          </div>
+          <div class="grid">
+            <div>
+              <div class="label">City</div>
+              <input class="input" [(ngModel)]="newAddress.city" />
+            </div>
+            <div>
+              <div class="label">State</div>
+              <input class="input" [(ngModel)]="newAddress.state" />
+            </div>
+          </div>
+          <label class="check">
+            <input type="checkbox" [(ngModel)]="newAddress.isDefault" />
+            <span>Set as default</span>
+          </label>
+
+          <div class="actions">
+            <button class="btn secondary" type="button" (click)="showAddAddress = false">Cancel</button>
+            <button class="btn" type="button" (click)="saveAddress()">Save Address</button>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn secondary" type="button" (click)="back()">Previous</button>
+          <button class="btn" type="button" (click)="next()" [disabled]="!selectedAddressId">Next</button>
+        </div>
+      </section>
+
+      <!-- STEP 4 -->
+      <section *ngIf="step === 4 && !loading">
+        <h2 class="h">Review & Coupons</h2>
+
+        <div class="review">
+          <div class="review-item">
+            <div class="label">Service</div>
+            <div class="value">{{ selectedService?.name }}</div>
+          </div>
+          <div class="review-item">
+            <div class="label">Expert</div>
+            <div class="value">{{ selectedExpertName }}</div>
+          </div>
+          <div class="review-item">
+            <div class="label">Schedule</div>
+            <div class="value">
+              {{ bookingType === 'ASAP' ? 'ASAP' : (selectedDate + ' • ' + selectedTimeSlot) }} • {{ durationMinutes }} mins
+            </div>
+          </div>
+        </div>
+
+        <div class="coupon">
+          <div class="label">Coupon Code</div>
+          <div class="coupon-row">
+            <input class="input" placeholder="Enter coupon" [(ngModel)]="couponCode" />
+            <button class="btn small" type="button" (click)="applyCoupon()">Apply</button>
+          </div>
+          <div class="muted" *ngIf="couponError">{{ couponError }}</div>
+
+          <div class="coupon-list" *ngIf="coupons.length">
+            <div class="coupon-card" *ngFor="let c of coupons">
+              <div class="coupon-code">{{ c.code }}</div>
+              <div class="coupon-desc">{{ c.description }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="summary">
+          <div class="sum-row"><span>Base Amount</span><span>₹{{ baseAmount }}</span></div>
+          <div class="sum-row" *ngIf="addonsAmount > 0"><span>Add-ons</span><span>₹{{ addonsAmount }}</span></div>
+          <div class="sum-row"><span>Subtotal</span><span>₹{{ subtotal }}</span></div>
+          <div class="sum-row" *ngIf="discountAmount > 0"><span>Discount</span><span>-₹{{ discountAmount }}</span></div>
+          <div class="sum-row"><span>GST (18%)</span><span>₹{{ gstAmount }}</span></div>
+          <div class="sum-total"><span>Total Amount</span><span>₹{{ totalAmount }}</span></div>
+        </div>
+
+        <div class="actions">
+          <button class="btn secondary" type="button" (click)="back()">Previous</button>
+          <button class="btn" type="button" (click)="proceedToPayment()">Proceed to Payment</button>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Payment modal -->
+  <div class="modal" *ngIf="showPaymentModal" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div class="modal-title">Payment</div>
+        <button class="icon" type="button" (click)="closePayment()">✕</button>
+      </div>
+
+      <div class="tabs">
+        <button class="tab" type="button" [class.active]="paymentTab==='CARD'" (click)="paymentTab='CARD'">Card Payment</button>
+        <button class="tab" type="button" [class.active]="paymentTab==='UPI'" (click)="paymentTab='UPI'">UPI Payment</button>
+        <button class="tab" type="button" [class.active]="paymentTab==='NET_BANKING'" (click)="paymentTab='NET_BANKING'">Net Banking</button>
+      </div>
+
+      <div class="tab-body" *ngIf="!paymentSuccess">
+        <div *ngIf="paymentTab==='CARD'">
+          <div class="grid">
+            <div>
+              <div class="label">Card Number</div>
+              <input class="input" [(ngModel)]="card.cardNumber" />
+            </div>
+            <div>
+              <div class="label">Cardholder Name</div>
+              <input class="input" [(ngModel)]="card.cardholderName" />
+            </div>
+          </div>
+          <div class="grid">
+            <div>
+              <div class="label">Expiry (MM/YY)</div>
+              <input class="input" [(ngModel)]="card.expiry" />
+            </div>
+            <div>
+              <div class="label">CVV</div>
+              <input class="input" [(ngModel)]="card.cvv" />
+            </div>
+          </div>
+          <div class="muted">Your payment is secure and encrypted.</div>
+
+          <button class="btn full" type="button" [disabled]="paying" (click)="pay('CARD')">
+            {{ paying ? 'Processing…' : ('Pay ₹' + createdBooking?.quotedAmount) }}
+          </button>
+        </div>
+
+        <div *ngIf="paymentTab==='UPI'">
+          <div>
+            <div class="label">UPI ID</div>
+            <input class="input" placeholder="name@bank" [(ngModel)]="upi.upiId" />
+          </div>
+          <button class="btn full" type="button" [disabled]="paying" (click)="pay('UPI')">
+            {{ paying ? 'Processing…' : ('Pay ₹' + createdBooking?.quotedAmount) }}
+          </button>
+        </div>
+
+        <div *ngIf="paymentTab==='NET_BANKING'">
+          <div>
+            <div class="label">Bank</div>
+            <input class="input" placeholder="Bank name" [(ngModel)]="netBanking.bankName" />
+          </div>
+          <button class="btn full" type="button" [disabled]="paying" (click)="pay('NET_BANKING')">
+            {{ paying ? 'Processing…' : ('Pay ₹' + createdBooking?.quotedAmount) }}
+          </button>
+        </div>
+      </div>
+
+      <div class="success" *ngIf="paymentSuccess">
+        <div class="success-title">Payment was Successful</div>
+        <div class="success-amt">₹{{ lastPaidAmount }}</div>
+        <button class="btn full" type="button" (click)="closePayment()">Go to Dashboard</button>
+      </div>
+    </div>
+  </div>
+</div>

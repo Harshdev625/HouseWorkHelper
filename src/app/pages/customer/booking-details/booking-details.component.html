@@ -1,0 +1,35 @@
+<div class="wrap">
+  <div class="top">
+    <button class="btn secondary" type="button" (click)="back()">Back</button>
+    <h1 class="title">Booking Details</h1>
+  </div>
+
+  <div class="state" *ngIf="loading">Loading…</div>
+  <div class="state" *ngIf="error && !loading">{{ error }}</div>
+
+  <div class="card" *ngIf="!loading && booking && service">
+    <div class="row">
+      <div class="name">{{ service.name }}</div>
+      <div class="status">{{ booking.status }}</div>
+    </div>
+
+    <div class="meta">Type: {{ booking.bookingType }}</div>
+    <div class="meta" *ngIf="booking.scheduledStartTime">Scheduled: {{ booking.scheduledStartTime | date:'medium' }}</div>
+    <div class="meta">Duration: {{ booking.durationMinutes }} mins</div>
+    <div class="meta">OTP (assurance): {{ booking.otp }}</div>
+
+    <div class="box" *ngIf="address">
+      <div class="box-title">Service Address</div>
+      <div class="meta">{{ address.label }}</div>
+      <div class="meta">{{ address.line1 }} {{ address.line2 }}</div>
+      <div class="meta">{{ address.city }}, {{ address.state }} - {{ address.postalCode }}</div>
+    </div>
+
+    <div class="box">
+      <div class="box-title">Payment</div>
+      <div class="meta">Total: ₹{{ booking.quotedAmount }}</div>
+      <div class="meta">Paid: ₹{{ amountPaid }}</div>
+      <div class="meta">Due: ₹{{ amountDue }}</div>
+    </div>
+  </div>
+</div>

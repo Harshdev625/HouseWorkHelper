@@ -24,15 +24,8 @@ describe('RegisterExpertComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        RegisterExpertComponent,
-        CommonModule,
-        ReactiveFormsModule,
-        RouterTestingModule
-      ],
-      providers: [
-        provideMockStore({ initialState })
-      ]
+      imports: [RegisterExpertComponent, CommonModule, ReactiveFormsModule, RouterTestingModule],
+      providers: [provideMockStore({ initialState })]
     }).compileComponents();
 
     store = TestBed.inject(MockStore);
@@ -49,127 +42,118 @@ describe('RegisterExpertComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should initialize with available skills', () => {
-    expect(component.availableSkills).toBeDefined();
-    expect(component.availableSkills.length).toBeGreaterThan(0);
-    expect(component.availableSkills).toContain('Cleaning');
+  it('should start on step 1', () => {
+    expect(component.currentStep).toBe(1);
   });
 
-  it('should toggle skill selection', () => {
-    expect(component.selectedSkills).toEqual([]);
-    
-    component.toggleSkill('Cleaning');
-    expect(component.selectedSkills).toContain('Cleaning');
-    
-    component.toggleSkill('Cleaning');
-    expect(component.selectedSkills).not.toContain('Cleaning');
+  it('should not advance to step 2 when step 1 is invalid', () => {
+    component.nextStep();
+    expect(component.currentStep).toBe(1);
   });
 
-  it('should check if skill is selected', () => {
-    component.selectedSkills = ['Cleaning', 'Plumbing'];
-    
-    expect(component.isSkillSelected('Cleaning')).toBeTruthy();
-    expect(component.isSkillSelected('Cooking')).toBeFalsy();
-  });
-
-  it('should validate form fields', () => {
-    const form = component.registrationForm;
-    
-    expect(form.get('fullName')?.valid).toBeFalsy();
-    expect(form.get('phone')?.valid).toBeFalsy();
-    expect(form.get('email')?.valid).toBeFalsy();
-    expect(form.get('password')?.valid).toBeFalsy();
-    
-    form.patchValue({
-      fullName: 'Expert Name',
-      phone: '+919876543210',
-      email: 'expert@example.com',
-      password: 'Str0ngP@ssw0rd!'
+  it('should advance to step 2 when step 1 is valid', () => {
+    component.personalInfoForm.patchValue({
+      fullName: 'John Doe',
+      mobileNumber: '9876543210',
+      dateOfBirth: '1995-01-01',
+      completeAddress: 'Flat 1, Some Building, Some Street',
+      city: 'Pune',
+      state: 'Maharashtra',
+      pinCode: '411001'
     });
-    
-    expect(form.valid).toBeTruthy();
+
+    component.nextStep();
+    expect(component.currentStep).toBe(2);
   });
 
-  it('should not submit if no skills selected', () => {
-    component.registrationForm.patchValue({
-      fullName: 'Expert Name',
-      phone: '+919876543210',
-      email: 'expert@example.com',
-      password: 'Str0ngP@ssw0rd!'
+  it('should require selections in step 2 before advancing', () => {
+    component.personalInfoForm.patchValue({
+      fullName: 'John Doe',
+      mobileNumber: '9876543210',
+      dateOfBirth: '1995-01-01',
+      completeAddress: 'Flat 1, Some Building, Some Street',
+      city: 'Pune',
+      state: 'Maharashtra',
+      pinCode: '411001'
     });
-    component.selectedSkills = [];
+    component.nextStep();
 
+    component.serviceProfileForm.patchValue({
+      experienceYears: 2,
+      experienceMonths: 3,
+      expectedHourlyRate: 150
+    });
+
+    component.nextStep();
+    expect(component.currentStep).toBe(2);
+
+    component.toggleService('cleaning');
+    component.toggleLanguage('English');
+    component.toggleEducationLevel('10th Pass');
+    component.selectAvailability(component.availabilityOptions[0]);
+
+    component.nextStep();
+    expect(component.currentStep).toBe(3);
+  });
+
+  it('should not submit when step 3 is invalid', () => {
     component.onSubmit();
     expect(dispatchSpy).not.toHaveBeenCalled();
   });
 
-  it('should dispatch registerExpert action with skills', () => {
-    component.registrationForm.patchValue({
-      fullName: 'Expert Name',
-      phone: '+919876543210',
-      email: 'expert@example.com',
-      password: 'Str0ngP@ssw0rd!'
+  it('should dispatch registerExpert on valid submit', () => {
+    component.personalInfoForm.patchValue({
+      fullName: 'John Doe',
+      mobileNumber: '9876543210',
+      dateOfBirth: '1995-01-01',
+      completeAddress: 'Flat 1, Some Building, Some Street',
+      city: 'Pune',
+      state: 'Maharashtra',
+      pinCode: '411001'
     });
-    component.selectedSkills = ['Cleaning', 'Plumbing'];
+    component.serviceProfileForm.patchValue({
+      experienceYears: 2,
+      experienceMonths: 3,
+      expectedHourlyRate: 150
+    });
+    component.idVerificationForm.patchValue({
+      idProofType: 'Aadhar Card',
+      idNumber: '56721-234-5566',
+      photograph: 'photo.png'
+    });
+
+    component.selectedServices = ['cleaning'];
+    component.selectedLanguages = ['English'];
+    component.selectedEducationLevels = ['10th Pass'];
+    component.selectedAvailability = component.availabilityOptions[0];
 
     component.onSubmit();
 
-    expect(dispatchSpy).toHaveBeenCalledWith(
+    expect(dispatchSpy).toHaveBeenCalled();
+    expect(dispatchSpy.calls.mostRecent().args[0]).toEqual(
       registerExpert({
         request: jasmine.objectContaining({
-          fullName: 'Expert Name',
+          fullName: 'John Doe',
           phone: '+919876543210',
-          email: 'expert@example.com',
-          password: 'Str0ngP@ssw0rd!',
-          skills: ['Cleaning', 'Plumbing']
+          services: ['cleaning'],
+          languages: ['English'],
+          educationLevels: ['10th Pass'],
+          availability: component.availabilityOptions[0],
+          idProofType: 'Aadhar Card',
+          idNumber: '56721-234-5566',
+          photograph: 'photo.png',
+          zoneIds: jasmine.any(Array)
         }) as any
       })
     );
   });
 
-  it('should include default zone in registration', () => {
-    component.registrationForm.patchValue({
-      fullName: 'Expert Name',
-      phone: '+919876543210',
-      email: 'expert@example.com',
-      password: 'Str0ngP@ssw0rd!'
-    });
-    component.selectedSkills = ['Cleaning'];
+  it('should return error message for invalid mobileNumber', () => {
+    const control = component.personalInfoForm.get('mobileNumber');
+    control?.setValue('invalid');
+    control?.markAsTouched();
 
-    component.onSubmit();
-
-    const dispatchCall = dispatchSpy.calls.mostRecent();
-    const request = dispatchCall.args[0].request;
-    expect(request.zoneIds).toBeDefined();
-    expect(request.zoneIds.length).toBeGreaterThan(0);
-  });
-
-  it('should validate phone number format', () => {
-    const phoneControl = component.registrationForm.get('phone');
-    
-    phoneControl?.setValue('9876543210');
-    expect(phoneControl?.hasError('pattern')).toBeTruthy();
-    
-    phoneControl?.setValue('+919876543210');
-    expect(phoneControl?.valid).toBeTruthy();
-  });
-
-  it('should validate strong password', () => {
-    const passwordControl = component.registrationForm.get('password');
-    
-    passwordControl?.setValue('weak');
-    expect(passwordControl?.invalid).toBeTruthy();
-    
-    passwordControl?.setValue('Str0ngP@ssw0rd!');
-    expect(passwordControl?.valid).toBeTruthy();
-  });
-
-  it('should return correct error messages', () => {
-    const phoneControl = component.registrationForm.get('phone');
-    phoneControl?.setValue('invalid');
-    phoneControl?.markAsTouched();
-
-    const errorMessage = component.getErrorMessage('phone');
-    expect(errorMessage).toContain('+91');
+    const message = component.getErrorMessage(component.personalInfoForm, 'mobileNumber');
+    expect(message).toContain('10-digit');
   });
 });

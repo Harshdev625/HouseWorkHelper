@@ -162,6 +162,20 @@
       "description": "Electrical repair and installation",
       "iconUrl": "https://example.com/icons/electrical.png",
       "isActive": true
+    },
+    {
+      "id": "cat-4-id",
+      "name": "Cooking",
+      "description": "Home cooking services",
+      "iconUrl": "https://example.com/icons/cooking.png",
+      "isActive": true
+    },
+    {
+      "id": "cat-5-id",
+      "name": "Gardening",
+      "description": "Gardening and outdoor maintenance",
+      "iconUrl": "https://example.com/icons/gardening.png",
+      "isActive": true
     }
   ],
   "services": [
@@ -192,6 +206,36 @@
           "durationDeltaMinutes": 30
         }
       ]
+    },
+    {
+      "id": "service-cook-id",
+      "categoryId": "cat-4-id",
+      "name": "Cooking Service",
+      "description": "Home-cooked meals prepared as per your preferences",
+      "startingPrice": 300,
+      "currency": "INR",
+      "typicalDurationMinutes": 120,
+      "isActive": true,
+      "availableZones": [
+        "a3c62d2c-1d4b-4a26-9d0c-b6c1a7a7a111",
+        "zone-2-id"
+      ],
+      "addons": []
+    },
+    {
+      "id": "service-garden-id",
+      "categoryId": "cat-5-id",
+      "name": "Gardening Service",
+      "description": "Lawn care and basic garden maintenance",
+      "startingPrice": 300,
+      "currency": "INR",
+      "typicalDurationMinutes": 120,
+      "isActive": true,
+      "availableZones": [
+        "a3c62d2c-1d4b-4a26-9d0c-b6c1a7a7a111",
+        "zone-2-id"
+      ],
+      "addons": []
     },
     {
       "id": "service-2-id",

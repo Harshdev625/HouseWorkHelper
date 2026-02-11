@@ -8,7 +8,7 @@ import { Service, Category, Zone } from '../models';
   providedIn: 'root'
 })
 export class ServiceService {
-  private apiUrl = 'http://localhost:3000';
+  private apiUrl = 'http://localhost:3000/api/v1';
 
   constructor(private http: HttpClient) {}
 
