@@ -129,6 +129,25 @@
               <div class="form-row">
                 <div class="form-group full-width">
                   <label class="label">
+                    <span class="material-icons label-icon" aria-hidden="true">lock</span>
+                    Password <span class="required">*</span>
+                  </label>
+                  <input
+                    type="password"
+                    formControlName="password"
+                    class="input"
+                    placeholder="Enter strong password"
+                    [class.error]="personalInfoForm.get('password')?.invalid && personalInfoForm.get('password')?.touched"
+                  />
+                  <span class="error-message" *ngIf="personalInfoForm.get('password')?.invalid && personalInfoForm.get('password')?.touched">
+                    {{ getErrorMessage(personalInfoForm, 'password') }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group full-width">
+                  <label class="label">
                     <span class="material-icons label-icon" aria-hidden="true">location_on</span>
                     Complete Address <span class="required">*</span>
                   </label>
@@ -269,6 +288,25 @@
                   rows="3"
                   placeholder="E.g., Expert in deep cleaning, Experienced with traditional Indian cooking, Certified in first aid for elderly care."
                 ></textarea>
+              </div>
+
+              <div class="form-group full-width">
+                <label class="label">
+                  <span class="material-icons label-icon" aria-hidden="true">currency_rupee</span>
+                  Expected Hourly Rate (₹) <span class="required">*</span>
+                </label>
+                <p class="helper-text">Enter your expected hourly rate in Indian Rupees</p>
+                <input
+                  type="number"
+                  formControlName="expectedHourlyRate"
+                  class="input"
+                  placeholder="e.g., 250"
+                  min="1"
+                  [class.error]="serviceProfileForm.get('expectedHourlyRate')?.invalid && serviceProfileForm.get('expectedHourlyRate')?.touched"
+                />
+                <span class="error-message" *ngIf="serviceProfileForm.get('expectedHourlyRate')?.invalid && serviceProfileForm.get('expectedHourlyRate')?.touched">
+                  {{ getErrorMessage(serviceProfileForm, 'expectedHourlyRate') }}
+                </span>
               </div>
 
               <div class="form-group full-width">

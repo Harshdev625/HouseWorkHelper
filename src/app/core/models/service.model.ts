@@ -11,19 +11,20 @@ export interface Service {
   categoryId: string;
   name: string;
   description: string;
-  startingPrice: number;
+  hourlyRateInr: number;
   currency: string;
-  typicalDurationMinutes: number;
+  durationMinutes: number;
+  imageUrl?: string;
   isActive: boolean;
-  availableZones: string[];
+  availableZones?: string[];
   addons: ServiceAddon[];
 }
 
 export interface ServiceAddon {
   id: string;
   name: string;
-  priceDelta: number;
-  durationDeltaMinutes: number;
+  priceInr: number;
+  durationMinutes: number;
 }
 
 export interface Zone {

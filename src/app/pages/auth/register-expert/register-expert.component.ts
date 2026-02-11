@@ -78,6 +78,14 @@ export class RegisterExpertComponent implements OnInit {
     this.personalInfoForm = this.fb.group({
       fullName: ['', [Validators.required, Validators.minLength(2)]],
       mobileNumber: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]],
+      password: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(8),
+          Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/)
+        ]
+      ],
       dateOfBirth: ['', [Validators.required]],
       completeAddress: ['', [Validators.required, Validators.minLength(10)]],
       city: ['', [Validators.required]],
@@ -229,9 +237,10 @@ export class RegisterExpertComponent implements OnInit {
       availability: this.selectedAvailability,
       phone: '+91' + this.personalInfoForm.value.mobileNumber,
       skills: this.selectedServices,
-      zoneIds: ['a3c62d2c-1d4b-4a26-9d0c-b6c1a7a7a111'], // Default zone
+      zoneIds: ['zone-blr-central'],
       email: `expert${Date.now()}@housemate.com`, // Temporary email
-      password: 'Expert@123' // Temporary password
+      password: this.personalInfoForm.value.password,
+      hourlyRate: this.serviceProfileForm.value.expectedHourlyRate // Save hourly rate
     };
 
     this.store.dispatch(registerExpert({ request: formData }));
@@ -255,6 +264,9 @@ export class RegisterExpertComponent implements OnInit {
       }
       if (fieldName === 'pinCode') {
         return 'Please enter a valid 6-digit PIN code';
+      }
+      if (fieldName === 'password') {
+        return 'Password must contain at least 8 characters, one uppercase, one lowercase, one number and one special character';
       }
     }
     if (control?.hasError('min')) {

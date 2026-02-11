@@ -180,7 +180,7 @@ server.post('/api/v1/auth/register/customer', async (req, res) => {
 // Register Expert endpoint
 server.post('/api/v1/auth/register/expert', async (req, res) => {
   try {
-    const { fullName, phone, email, password, skills, zoneIds, idProof } = req.body;
+    const { fullName, phone, email, password, skills, zoneIds, idProof, hourlyRate } = req.body;
 
     if (!fullName || !phone || !email || !password || !skills || skills.length === 0) {
       return res.status(400).json({ error: 'All fields including at least one skill are required' });
@@ -219,10 +219,12 @@ server.post('/api/v1/auth/register/expert', async (req, res) => {
       email,
       skills,
       zoneIds: zoneIds || [],
-      status: 'PENDING',
+      status: 'APPROVED',
       onlineStatus: 'OFFLINE',
       rating: 0,
       totalJobs: 0,
+      totalEarnings: 0,
+      hourlyRate: hourlyRate || 250, // Expert's custom hourly rate
       idProof: idProof || null,
       createdAt: new Date().toISOString()
     };

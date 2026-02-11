@@ -10,13 +10,14 @@ import { ServiceService } from '../../../core/services/service.service';
 import { PaymentService } from '../../../core/services/payment.service';
 import { Service } from '../../../core/models/service.model';
 import { User } from '../../../core/models/user.model';
+import { OtpService } from '../../../core/services/otp.service';
 
 @Component({
   selector: 'app-booking-details',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './booking-details.component.html',
-  styleUrls: ['./booking-details.component.css']
+  styleUrls: ['./booking-details-updated.component.css']
 })
 export class BookingDetailsComponent implements OnInit {
   user: User | null = null;
@@ -30,6 +31,7 @@ export class BookingDetailsComponent implements OnInit {
   address: BackendAddress | null = null;
 
   amountPaid = 0;
+  showOTP = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -37,7 +39,8 @@ export class BookingDetailsComponent implements OnInit {
     private store: Store,
     private bookingService: BookingService,
     private serviceService: ServiceService,
-    private paymentService: PaymentService
+    private paymentService: PaymentService,
+    private otpService: OtpService
   ) {}
 
   ngOnInit(): void {
@@ -91,5 +94,53 @@ export class BookingDetailsComponent implements OnInit {
 
   back(): void {
     this.router.navigate(['/customer/bookings']);
+  }
+
+  modifyBooking(): void {
+    this.router.navigate(['/customer/bookings', this.bookingId, 'modify']);
+  }
+
+  provideFeedback(): void {
+    this.router.navigate(['/customer/feedback']);
+  }
+
+  toggleOTP(): void {
+    this.showOTP = !this.showOTP;
+  }
+
+  formatDate(dateStr: string | null): string {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
+  }
+
+  formatTime(dateStr: string | null): string {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+  }
+
+  getStatusClass(status: string): string {
+    const statusMap: { [key: string]: string } = {
+      'PENDING': 'status-pending',
+      'CONFIRMED': 'status-confirmed',
+      'IN_PROGRESS': 'status-inprogress',
+      'COMPLETED': 'status-completed',
+      'CANCELLED': 'status-cancelled',
+      'CANCELLED_BY_CUSTOMER': 'status-cancelled'
+    };
+    return statusMap[status] || 'status-default';
+  }
+
+  getStatusLabel(status: string): string {
+    const labelMap: { [key: string]: string } = {
+      'PENDING': 'Pending',
+      'CONFIRMED': 'Confirmed',
+      'IN_PROGRESS': 'In Progress',
+      'COMPLETED': 'Completed',
+      'CANCELLED': 'Cancelled',
+      'CANCELLED_BY_CUSTOMER': 'Cancelled'
+    };
+    return labelMap[status] || status;
   }
 }

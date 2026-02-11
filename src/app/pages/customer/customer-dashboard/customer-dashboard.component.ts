@@ -109,8 +109,8 @@ export class CustomerDashboardComponent implements OnInit {
         }
 
         this.featuredServices = picked.slice(0, 3).map(svc => {
-          const hours = Math.max(0.5, (svc.typicalDurationMinutes || 60) / 60);
-          const hourlyRateInr = Math.round((svc.startingPrice || 0) / hours);
+          const hours = Math.max(0.5, (svc.durationMinutes || 60) / 60);
+          const hourlyRateInr = svc.hourlyRateInr || 0;
           return {
             id: svc.id,
             name: svc.name,
@@ -165,7 +165,7 @@ export class CustomerDashboardComponent implements OnInit {
             ? `${addr.line1}, ${addr.city} - ${addr.postalCode}`
             : 'Address not found';
 
-          const durationHours = Math.max(1, Math.round((b.durationMinutes || (svc?.typicalDurationMinutes || 60)) / 60));
+          const durationHours = Math.max(1, Math.round((b.durationMinutes || (svc?.durationMinutes || 60)) / 60));
           const amountChipLabel = due > 0 ? `₹${due}/- to pay` : 'Paid';
 
           return {

@@ -1,35 +1,128 @@
-<div class="wrap">
-  <div class="top">
-    <button class="btn secondary" type="button" (click)="back()">Back</button>
-    <h1 class="title">Booking Details</h1>
-  </div>
+<div class="booking-details-container">
+  <header class="header">
+    <button class="back-btn" (click)="back()">&larr; Back to Bookings</button>
+    <h1>Booking Details</h1>
+  </header>
 
-  <div class="state" *ngIf="loading">Loading…</div>
-  <div class="state" *ngIf="error && !loading">{{ error }}</div>
+  <div class="loading" *ngIf="loading">Loading booking details...</div>
+  <div class="error" *ngIf="error">{{ error }}</div>
 
-  <div class="card" *ngIf="!loading && booking && service">
-    <div class="row">
-      <div class="name">{{ service.name }}</div>
-      <div class="status">{{ booking.status }}</div>
+  <div class="content" *ngIf="!loading && !error && booking">
+    <div class="main-section">
+      <!-- Booking Status -->
+      <div class="detail-section">
+        <h2>Booking Status</h2>
+        <div class="status-info">
+          <span class="status-badge" [ngClass]="getStatusClass(booking.status)">
+            {{ getStatusLabel(booking.status) }}
+          </span>
+          <p class="booking-id">Booking ID: {{ booking.id }}</p>
+        </div>
+      </div>
+
+      <!-- Service Details -->
+      <div class="detail-section">
+        <h2>Service Details</h2>
+        <div class="service-info">
+          <h3>{{ service?.name }}</h3>
+          <p>{{ service?.description }}</p>
+          <p><strong>Base Rate:</strong> ₹{{ service?.hourlyRateInr }}/hour</p>
+        </div>
+      </div>
+
+      <!-- Schedule -->
+      <div class="detail-section">
+        <h2>Schedule</h2>
+        <div class="schedule-info">
+          <p><strong>Type:</strong> {{ booking.bookingType === 'ASAP' ? 'ASAP' : 'Scheduled' }}</p>
+          <p *ngIf="booking.scheduledStartTime">
+            <strong>Scheduled:</strong> {{ formatDate(booking.scheduledStartTime) }} at {{ formatTime(booking.scheduledStartTime) }}
+          </p>
+          <p><strong>Duration:</strong> {{ booking.durationMinutes }} minutes</p>
+          <p *ngIf="booking.actualStartTime">
+            <strong>Started:</strong> {{ formatDate(booking.actualStartTime) }} at {{ formatTime(booking.actualStartTime) }}
+          </p>
+          <p *ngIf="booking.actualEndTime">
+            <strong>Completed:</strong> {{ formatDate(booking.actualEndTime) }} at {{ formatTime(booking.actualEndTime) }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Service Address -->
+      <div class="detail-section">
+        <h2>Service Address</h2>
+        <div class="address-info" *ngIf="address">
+          <p><strong>{{ address.label }}</strong></p>
+          <p>{{ address.line1 }}</p>
+          <p *ngIf="address.line2">{{ address.line2 }}</p>
+          <p>{{ address.city }}, {{ address.state }} - {{ address.postalCode }}</p>
+        </div>
+      </div>
+
+      <!-- OTP Section (for customer to share with expert) -->
+      <div class="detail-section otp-section" *ngIf="booking.status === 'CONFIRMED' || booking.status === 'IN_PROGRESS'">
+        <h2>Job Verification</h2>
+        <div class="otp-info">
+          <p class="otp-instruction">
+            Share this OTP with the expert to {{ booking.status === 'CONFIRMED' ? 'start' : 'complete' }} the job:
+          </p>
+          <div class="otp-display" *ngIf="showOTP">
+            <span class="otp-code">{{ booking.otp }}</span>
+          </div>
+          <button class="toggle-otp-btn" (click)="toggleOTP()">
+            {{ showOTP ? 'Hide OTP' : 'Show OTP' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Notes -->
+      <div class="detail-section" *ngIf="booking.notes">
+        <h2>Notes</h2>
+        <div class="notes-info">
+          <p>{{ booking.notes }}</p>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="actions-section">
+        <button 
+          class="modify-btn" 
+          (click)="modifyBooking()"
+          *ngIf="booking.status !== 'COMPLETED' && booking.status !== 'CANCELLED_BY_CUSTOMER'">
+          Modify Booking
+        </button>
+        <button 
+          class="feedback-btn" 
+          (click)="provideFeedback()"
+          *ngIf="booking.status === 'COMPLETED'">
+          Provide Feedback
+        </button>
+      </div>
     </div>
 
-    <div class="meta">Type: {{ booking.bookingType }}</div>
-    <div class="meta" *ngIf="booking.scheduledStartTime">Scheduled: {{ booking.scheduledStartTime | date:'medium' }}</div>
-    <div class="meta">Duration: {{ booking.durationMinutes }} mins</div>
-    <div class="meta">OTP (assurance): {{ booking.otp }}</div>
+    <!-- Payment Summary -->
+    <div class="summary-section">
+      <h2>Payment Summary</h2>
+      <div class="price-summary">
+        <div class="price-row">
+          <span>Service Amount</span>
+          <span>₹{{ booking.quotedAmount }}</span>
+        </div>
+        <div class="price-row">
+          <span>Amount Paid</span>
+          <span class="paid">₹{{ amountPaid }}</span>
+        </div>
+        <div class="price-row total">
+          <span>Amount Due</span>
+          <span [class.due]="amountDue > 0">₹{{ amountDue }}</span>
+        </div>
+      </div>
 
-    <div class="box" *ngIf="address">
-      <div class="box-title">Service Address</div>
-      <div class="meta">{{ address.label }}</div>
-      <div class="meta">{{ address.line1 }} {{ address.line2 }}</div>
-      <div class="meta">{{ address.city }}, {{ address.state }} - {{ address.postalCode }}</div>
-    </div>
-
-    <div class="box">
-      <div class="box-title">Payment</div>
-      <div class="meta">Total: ₹{{ booking.quotedAmount }}</div>
-      <div class="meta">Paid: ₹{{ amountPaid }}</div>
-      <div class="meta">Due: ₹{{ amountDue }}</div>
+      <div class="payment-status">
+        <span class="status-label" [class.paid-status]="amountDue === 0" [class.due-status]="amountDue > 0">
+          {{ amountDue === 0 ? 'Fully Paid' : 'Payment Pending' }}
+        </span>
+      </div>
     </div>
   </div>
 </div>

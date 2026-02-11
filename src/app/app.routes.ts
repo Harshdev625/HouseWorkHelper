@@ -7,6 +7,8 @@ import { CustomerDashboardComponent } from './pages/customer/customer-dashboard/
 import { BookServiceComponent } from './pages/customer/book-service/book-service.component';
 import { MyBookingsComponent } from './pages/customer/my-bookings/my-bookings.component';
 import { BookingDetailsComponent } from './pages/customer/booking-details/booking-details.component';
+import { ModifyBookingComponent } from './pages/customer/modify-booking/modify-booking.component';
+import { ProvideFeedbackComponent } from './pages/customer/provide-feedback/provide-feedback.component';
 import { ExpertDashboardComponent } from './pages/expert/expert-dashboard/expert-dashboard.component';
 import { authGuard, customerGuard, expertGuard } from './core/guards/auth.guard';
 
@@ -23,6 +25,8 @@ export const routes: Routes = [
       { path: 'book-service', component: BookServiceComponent },
       { path: 'bookings', component: MyBookingsComponent },
       { path: 'bookings/:id', component: BookingDetailsComponent },
+      { path: 'bookings/:id/modify', component: ModifyBookingComponent },
+      { path: 'feedback', component: ProvideFeedbackComponent },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },

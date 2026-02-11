@@ -90,6 +90,146 @@
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
 }
 
+/* Simple cards for lists */
+.appointments-list,
+.requests-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.appointment-card,
+.request-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 0.85rem;
+  background: #fafafa;
+}
+
+.appt-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.appt-title {
+  font-weight: 800;
+  color: #111827;
+}
+
+.appt-chip {
+  font-weight: 800;
+  color: #2563eb;
+}
+
+.appt-meta,
+.req-meta {
+  margin-top: 0.25rem;
+  color: #6b7280;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.take-action {
+  margin-top: 0.65rem;
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  border-radius: 10px;
+  border: none;
+  background: #2563eb;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* Modal */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(17, 24, 39, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 50;
+}
+
+.modal-card {
+  width: min(640px, 100%);
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.25);
+}
+
+.modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-title {
+  font-weight: 800;
+  color: #111827;
+}
+
+.icon {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0.25rem;
+  font-weight: 800;
+}
+
+.modal-body {
+  padding: 1rem;
+}
+
+.modal-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.3rem 0;
+}
+
+.modal-row .k {
+  color: #6b7280;
+  font-weight: 700;
+}
+
+.modal-row .v {
+  color: #111827;
+  font-weight: 800;
+}
+
+.modal-actions {
+  padding: 0.9rem 1rem 1rem;
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+.btn {
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 0.7rem 1rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.btn.danger {
+  background: #ef4444;
+}
+
+.btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
 .banner-content {
   display: flex;
   justify-content: space-between;
@@ -264,8 +404,8 @@
 }
 
 .calendar-content {
-  text-align: center;
-  padding: 2rem 1rem;
+  text-align: left;
+  padding: 0;
 }
 
 .calendar-content .material-icons {
@@ -278,6 +418,30 @@
   margin: 0;
   color: #9ca3af;
   font-size: 0.875rem;
+}
+
+.calendar-widget .select {
+  width: 100%;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.9rem;
+}
+
+.calendar-widget .tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.35rem 0.55rem;
+  border-radius: 999px;
+  background: #f3f4f6;
+  color: #374151;
+  font-size: 0.78rem;
+}
+
+.calendar-widget .tag.selected {
+  background: #e0f2fe;
+  color: #0c4a6e;
 }
 
 /* Responsive */

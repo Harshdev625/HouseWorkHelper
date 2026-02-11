@@ -34,7 +34,22 @@ export interface ExpertProfile {
   onlineStatus: 'ONLINE' | 'OFFLINE';
   rating: number;
   totalJobs: number;
-  idProof?: any;
+  totalEarnings?: number;
+  experience?: string;
+  hourlyRate?: number; // Expert's custom hourly rate in INR
+  certificates?: Array<{
+    id: string;
+    name: string;
+    issuer: string;
+    issueDate: string;
+    url?: string;
+  }>;
+  languages?: string[];
+  idProof?: {
+    type: string;
+    number: string;
+    documentUrl?: string;
+  };
   createdAt: string;
 }
 

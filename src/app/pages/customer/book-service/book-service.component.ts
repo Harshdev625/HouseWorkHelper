@@ -11,6 +11,7 @@ import { ExpertService } from '../../../core/services/expert.service';
 import { BookingService, BackendAddress, BackendBooking } from '../../../core/services/booking.service';
 import { CouponService, BackendCoupon } from '../../../core/services/coupon.service';
 import { PaymentService, PaymentMethod } from '../../../core/services/payment.service';
+import { ExpertAvailabilityService, ExpertAvailability } from '../../../core/services/expert-availability.service';
 import { Service, Category, Zone, ExpertProfile, User } from '../../../core/models';
 
 type Step = 1 | 2 | 3 | 4;
@@ -45,6 +46,9 @@ export class BookServiceComponent implements OnInit {
   experts: ExpertProfile[] = [];
   expertSearch = '';
   selectedExpertId: string | null = null;
+  // Availability
+  availabilityLoading = false;
+  availabilityByExpertId = new Map<string, ExpertAvailability>();
 
   // Schedule
   bookingType: 'ASAP' | 'SCHEDULED' = 'ASAP';
@@ -107,7 +111,8 @@ export class BookServiceComponent implements OnInit {
     private expertService: ExpertService,
     private bookingService: BookingService,
     private couponService: CouponService,
-    private paymentService: PaymentService
+    private paymentService: PaymentService,
+    private availabilityService: ExpertAvailabilityService
   ) {}
 
   ngOnInit(): void {
@@ -164,12 +169,13 @@ export class BookServiceComponent implements OnInit {
   selectService(service: Service): void {
     this.selectedServiceId = service.id;
     this.selectedAddonIds = [];
-    this.durationMinutes = service.typicalDurationMinutes || 60;
+    this.durationMinutes = service.durationMinutes || 60;
     this.appliedCoupon = null;
     this.couponCode = '';
     this.couponError = null;
     this.createdBooking = null;
     this.selectedExpertId = null;
+    this.expertSearch = '';
   }
 
   toggleAddon(addonId: string): void {
@@ -199,8 +205,8 @@ export class BookServiceComponent implements OnInit {
   get hourlyRateLabel(): string {
     const svc = this.selectedService;
     if (!svc) return '';
-    const hours = Math.max(1, (svc.typicalDurationMinutes || 60) / 60);
-    const hourly = Math.round(svc.startingPrice / hours);
+    const hours = Math.max(1, (svc.durationMinutes || 60) / 60);
+    const hourly = Math.round(svc.hourlyRateInr / hours);
     return `₹${hourly}/hr`;
   }
 
@@ -223,7 +229,23 @@ export class BookServiceComponent implements OnInit {
       list = list.filter(e => (e.fullName || '').toLowerCase().includes(q));
     }
 
+    // Availability filtering
+    if (this.bookingType === 'ASAP') {
+      list = list.filter(e => e.onlineStatus === 'ONLINE');
+    } else {
+      if (this.selectedDate && this.selectedTimeSlot) {
+        list = list.filter(e => {
+          const rec = this.availabilityByExpertId.get(e.id);
+          return (rec?.timeSlots || []).includes(this.selectedTimeSlot!);
+        });
+      }
+    }
+
     return list;
+  }
+
+  get availableExpertsCount(): number {
+    return this.expertCards.length;
   }
 
   selectExpert(expertId: string): void {
@@ -233,7 +255,7 @@ export class BookServiceComponent implements OnInit {
   // Step navigation
   next(): void {
     if (this.step === 1) {
-      if (!this.selectedServiceId || !this.selectedExpertId) return;
+      if (!this.selectedServiceId) return;
       this.step = 2;
       return;
     }
@@ -241,6 +263,7 @@ export class BookServiceComponent implements OnInit {
     if (this.step === 2) {
       if (this.bookingType === 'SCHEDULED' && (!this.selectedDate || !this.selectedTimeSlot)) return;
       if (!this.durationMinutes) return;
+      if (!this.selectedExpertId) return;
       this.step = 3;
       return;
     }
@@ -264,12 +287,68 @@ export class BookServiceComponent implements OnInit {
   // Step 2 helpers
   setBookingType(type: 'ASAP' | 'SCHEDULED'): void {
     this.bookingType = type;
+
     if (type === 'ASAP') {
       this.selectedDate = null;
       this.selectedTimeSlot = null;
+      this.availabilityByExpertId.clear();
+      this.availabilityLoading = false;
     } else {
       this.selectedDate = this.selectedDate || this.dateOptions[0] || null;
+      if (this.selectedDate) {
+        this.loadAvailabilityForDate(this.selectedDate);
+      }
     }
+
+    if (this.selectedExpertId && !this.expertCards.some(e => e.id === this.selectedExpertId)) {
+      this.selectedExpertId = null;
+    }
+  }
+
+  onScheduledDateChange(date: string | null): void {
+    this.selectedDate = date;
+    this.selectedTimeSlot = null;
+    this.availabilityByExpertId.clear();
+
+    if (date) {
+      this.loadAvailabilityForDate(date);
+    } else {
+      this.availabilityLoading = false;
+    }
+
+    if (this.selectedExpertId && !this.expertCards.some(e => e.id === this.selectedExpertId)) {
+      this.selectedExpertId = null;
+    }
+  }
+
+  onScheduledTimeChange(slot: string | null): void {
+    this.selectedTimeSlot = slot;
+
+    if (this.selectedExpertId && !this.expertCards.some(e => e.id === this.selectedExpertId)) {
+      this.selectedExpertId = null;
+    }
+  }
+
+  private loadAvailabilityForDate(date: string): void {
+    this.availabilityLoading = true;
+    this.availabilityByExpertId.clear();
+
+    this.availabilityService.getByDate(date).subscribe({
+      next: (records) => {
+        this.availabilityByExpertId = new Map<string, ExpertAvailability>(
+          records.map(r => [r.expertProfileId, r])
+        );
+        this.availabilityLoading = false;
+
+        if (this.selectedExpertId && !this.expertCards.some(e => e.id === this.selectedExpertId)) {
+          this.selectedExpertId = null;
+        }
+      },
+      error: () => {
+        this.availabilityLoading = false;
+        this.availabilityByExpertId.clear();
+      }
+    });
   }
 
   // Step 3: addresses
@@ -309,7 +388,7 @@ export class BookServiceComponent implements OnInit {
 
   // Step 4: coupons + quote
   get baseAmount(): number {
-    return this.selectedService?.startingPrice || 0;
+    return this.selectedService?.hourlyRateInr || 0;
   }
 
   get addonsAmount(): number {
@@ -317,7 +396,7 @@ export class BookServiceComponent implements OnInit {
     const addons = this.selectedService.addons || [];
     return addons
       .filter(a => this.selectedAddonIds.includes(a.id))
-      .reduce((sum, a) => sum + (a.priceDelta || 0), 0);
+      .reduce((sum, a) => sum + (a.priceInr || 0), 0);
   }
 
   get subtotal(): number {
@@ -325,60 +404,74 @@ export class BookServiceComponent implements OnInit {
   }
 
   get discountAmount(): number {
-    if (!this.appliedCoupon) return 0;
-    if (this.subtotal < (this.appliedCoupon.minOrderValue || 0)) return 0;
+    const coupon = this.appliedCoupon;
+    if (!coupon) return 0;
 
-    if (this.appliedCoupon.discountType === 'FIXED') {
-      return Math.min(this.appliedCoupon.discountValue, this.subtotal);
+    if (this.subtotal < (coupon.minOrderValue || 0)) return 0;
+
+    if (coupon.applicableZones?.length && this.selectedZoneId && !coupon.applicableZones.includes(this.selectedZoneId)) {
+      return 0;
     }
 
-    const raw = (this.subtotal * this.appliedCoupon.discountValue) / 100;
-    const capped = this.appliedCoupon.maxDiscount ? Math.min(raw, this.appliedCoupon.maxDiscount) : raw;
-    return Math.min(capped, this.subtotal);
-  }
+    if (coupon.applicableServices?.length && this.selectedServiceId && !coupon.applicableServices.includes(this.selectedServiceId)) {
+      return 0;
+    }
 
-  get taxableAmount(): number {
-    return Math.max(0, this.subtotal - this.discountAmount);
+    let discount = 0;
+    if (coupon.discountType === 'FIXED') {
+      discount = coupon.discountValue;
+    } else {
+      discount = (this.subtotal * coupon.discountValue) / 100;
+    }
+
+    if (coupon.maxDiscount != null) {
+      discount = Math.min(discount, coupon.maxDiscount);
+    }
+
+    discount = Math.max(0, Math.min(discount, this.subtotal));
+    return Math.round(discount);
   }
 
   get gstAmount(): number {
-    return Math.round(this.taxableAmount * 0.18);
+    const taxable = Math.max(0, this.subtotal - this.discountAmount);
+    return Math.round(taxable * 0.18);
   }
 
   get totalAmount(): number {
-    return this.taxableAmount + this.gstAmount;
+    return Math.max(0, this.subtotal - this.discountAmount) + this.gstAmount;
   }
 
   applyCoupon(): void {
     this.couponError = null;
     const code = this.couponCode.trim().toUpperCase();
+
     if (!code) {
       this.appliedCoupon = null;
       return;
     }
 
-    const coupon = this.coupons.find(c => c.code.toUpperCase() === code && c.isActive);
+    const coupon = this.coupons.find(c => (c.code || '').toUpperCase() === code) || null;
     if (!coupon) {
       this.appliedCoupon = null;
       this.couponError = 'Invalid coupon code.';
       return;
     }
 
-    if (this.subtotal < coupon.minOrderValue) {
+    if (this.subtotal < (coupon.minOrderValue || 0)) {
       this.appliedCoupon = null;
-      this.couponError = `Minimum order value is ₹${coupon.minOrderValue}.`;
-      return;
-    }
-
-    if (coupon.applicableServices?.length && this.selectedServiceId && !coupon.applicableServices.includes(this.selectedServiceId)) {
-      this.appliedCoupon = null;
-      this.couponError = 'Coupon not applicable to this service.';
+      this.couponError = `Minimum order ₹${coupon.minOrderValue} required.`;
       return;
     }
 
     if (coupon.applicableZones?.length && this.selectedZoneId && !coupon.applicableZones.includes(this.selectedZoneId)) {
       this.appliedCoupon = null;
-      this.couponError = 'Coupon not applicable in this zone.';
+      this.couponError = 'Coupon not applicable for selected zone.';
+      return;
+    }
+
+    if (coupon.applicableServices?.length && this.selectedServiceId && !coupon.applicableServices.includes(this.selectedServiceId)) {
+      this.appliedCoupon = null;
+      this.couponError = 'Coupon not applicable for selected service.';
       return;
     }
 
@@ -388,6 +481,7 @@ export class BookServiceComponent implements OnInit {
   proceedToPayment(): void {
     if (!this.user || !this.selectedServiceId || !this.selectedAddressId) return;
     if (!this.selectedZoneId) return;
+    if (!this.selectedExpertId) return;
 
     if (this.paying) return;
 
@@ -403,7 +497,7 @@ export class BookServiceComponent implements OnInit {
       addressId: this.selectedAddressId,
       status: 'PENDING_PAYMENT',
       bookingType: this.bookingType,
-      durationMinutes: this.durationMinutes || (this.selectedService?.typicalDurationMinutes || 60),
+      durationMinutes: this.durationMinutes || (this.selectedService?.durationMinutes || 60),
       addonIds: [...this.selectedAddonIds],
       quotedAmount: this.totalAmount,
       currency: 'INR',

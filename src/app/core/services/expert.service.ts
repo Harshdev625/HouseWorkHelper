@@ -25,4 +25,13 @@ export class ExpertService {
       params: httpParams
     });
   }
+
+  getExpertProfileByUserId(userId: string): Observable<ExpertProfile[]> {
+    const params = new HttpParams().set('userId', userId);
+    return this.http.get<ExpertProfile[]>(`${this.apiUrl}/expertProfiles`, { params });
+  }
+
+  patchExpertProfile(expertProfileId: string, patch: Partial<ExpertProfile>): Observable<ExpertProfile> {
+    return this.http.patch<ExpertProfile>(`${this.apiUrl}/expertProfiles/${expertProfileId}`, patch);
+  }
 }

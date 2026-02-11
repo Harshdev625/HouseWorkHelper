@@ -83,10 +83,25 @@ export class AuthEffects {
     () =>
       this.actions$.pipe(
         ofType(AuthActions.logout),
-        tap(() => {
-          localStorage.removeItem('token');
-          this.router.navigate(['/']);
-        })
+        exhaustMap(() =>
+          this.authService.logout().pipe(
+            tap(() => {
+              localStorage.removeItem('token');
+              // clear any cached session/user details
+              localStorage.removeItem('user');
+              localStorage.removeItem('profile');
+              this.router.navigate(['/']);
+            }),
+            catchError(() => {
+              // even if backend logout fails, client session must be cleared
+              localStorage.removeItem('token');
+              localStorage.removeItem('user');
+              localStorage.removeItem('profile');
+              this.router.navigate(['/']);
+              return of(null);
+            })
+          )
+        )
       ),
     { dispatch: false }
   );

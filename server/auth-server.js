@@ -208,7 +208,7 @@ app.post('/api/v1/auth/register/expert', async (req, res) => {
       email,
       skills,
       zoneIds: zoneIds || [],
-      status: 'PENDING',
+      status: 'APPROVED',
       onlineStatus: 'OFFLINE',
       rating: 0,
       totalJobs: 0,

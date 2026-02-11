@@ -15,8 +15,8 @@
 
   <main class="content">
     <div class="stepper">
-      <div class="step" [class.active]="step === 1"><span class="dot">1</span> Select Service & Expert</div>
-      <div class="step" [class.active]="step === 2"><span class="dot">2</span> Date & Time</div>
+      <div class="step" [class.active]="step === 1"><span class="dot">1</span> Select Service</div>
+      <div class="step" [class.active]="step === 2"><span class="dot">2</span> Date, Time & Expert</div>
       <div class="step" [class.active]="step === 3"><span class="dot">3</span> Address Details</div>
       <div class="step" [class.active]="step === 4"><span class="dot">4</span> Review & Coupons</div>
     </div>
@@ -58,7 +58,7 @@
               (click)="selectService(svc)"
             >
               <div class="svc-name">{{ svc.name }}</div>
-              <div class="svc-sub">₹{{ svc.startingPrice }} starting</div>
+              <div class="svc-sub">₹{{ svc.hourlyRateInr }}/hr</div>
             </button>
           </div>
 
@@ -67,51 +67,18 @@
             <label class="addon" *ngFor="let a of selectedService!.addons">
               <input type="checkbox" [checked]="selectedAddonIds.includes(a.id)" (change)="toggleAddon(a.id)" />
               <span>{{ a.name }}</span>
-              <span class="addon-price">+₹{{ a.priceDelta }}</span>
+              <span class="addon-price">+₹{{ a.priceInr }}</span>
             </label>
           </div>
         </div>
 
         <div class="section">
-          <div class="section-head">
-            <h2 class="h">Experts Near You</h2>
-            <input class="input" placeholder="Search experts…" [(ngModel)]="expertSearch" />
-          </div>
-
-          <div class="experts" role="list">
-            <button
-              class="expert"
-              role="listitem"
-              *ngFor="let e of expertCards"
-              type="button"
-              [class.selected]="e.id === selectedExpertId"
-              (click)="selectExpert(e.id)"
-            >
-              <div class="expert-top">
-                <div class="expert-name">{{ e.fullName }}</div>
-                <div class="badge" *ngIf="e.status === 'APPROVED'">Verified</div>
-              </div>
-              <div class="expert-meta">
-                <span class="meta">⭐ {{ e.rating }} ({{ e.totalJobs }})</span>
-                <span class="meta" *ngIf="e.onlineStatus === 'ONLINE'">Online</span>
-                <span class="meta" *ngIf="e.onlineStatus !== 'ONLINE'">Offline</span>
-              </div>
-              <div class="tags">
-                <span class="tag" *ngFor="let s of e.skills | slice:0:4">{{ s }}</span>
-              </div>
-              <div class="expert-rate" *ngIf="selectedService">{{ hourlyRateLabel }}</div>
-              <div class="expert-link">View Certificates</div>
-            </button>
-          </div>
-
-          <div class="empty" *ngIf="expertCards.length === 0">
-            No experts found for this service.
-          </div>
+          <div class="muted">Next: pick schedule to see available experts.</div>
         </div>
 
         <div class="actions">
           <button class="btn secondary" type="button" (click)="back()">Back</button>
-          <button class="btn" type="button" (click)="next()" [disabled]="!selectedServiceId || !selectedExpertId">Next</button>
+          <button class="btn" type="button" (click)="next()" [disabled]="!selectedServiceId">Next</button>
         </div>
       </section>
 
@@ -127,14 +94,14 @@
         <div class="grid" *ngIf="bookingType === 'SCHEDULED'">
           <div>
             <div class="label">Date (up to 4 days)</div>
-            <select class="select" [(ngModel)]="selectedDate">
+            <select class="select" [ngModel]="selectedDate" (ngModelChange)="onScheduledDateChange($event)">
               <option [ngValue]="null">Select date</option>
               <option *ngFor="let d of dateOptions" [ngValue]="d">{{ d }}</option>
             </select>
           </div>
           <div>
             <div class="label">Time Slot</div>
-            <select class="select" [(ngModel)]="selectedTimeSlot">
+            <select class="select" [ngModel]="selectedTimeSlot" (ngModelChange)="onScheduledTimeChange($event)">
               <option [ngValue]="null">Select slot</option>
               <option *ngFor="let t of timeSlots" [ngValue]="t">{{ t }}</option>
             </select>
@@ -159,13 +126,56 @@
           </div>
         </div>
 
+        <div class="section">
+          <div class="section-head">
+            <h2 class="h">Experts Near You</h2>
+            <input class="input" placeholder="Search experts…" [(ngModel)]="expertSearch" />
+          </div>
+
+          <div class="muted" *ngIf="bookingType === 'ASAP'">Showing experts who are online now.</div>
+          <div class="muted" *ngIf="bookingType === 'SCHEDULED'">
+            Select date + time slot to see who is available. Available: {{ availableExpertsCount }}
+            <span *ngIf="availabilityLoading">(loading…)</span>
+          </div>
+
+          <div class="experts" role="list">
+            <button
+              class="expert"
+              role="listitem"
+              *ngFor="let e of expertCards"
+              type="button"
+              [class.selected]="e.id === selectedExpertId"
+              (click)="selectExpert(e.id)"
+            >
+              <div class="expert-top">
+                <div class="expert-name">{{ e.fullName }}</div>
+                <div class="badge" *ngIf="e.status === 'APPROVED'">Verified</div>
+              </div>
+              <div class="expert-meta">
+                <span class="meta">⭐ {{ e.rating }} ({{ e.totalJobs }})</span>
+                <span class="meta" *ngIf="e.onlineStatus === 'ONLINE'">Online</span>
+                <span class="meta" *ngIf="e.onlineStatus !== 'ONLINE'">Offline</span>
+              </div>
+              <div class="tags">
+                <span class="tag" *ngFor="let s of e.skills | slice:0:4">{{ s }}</span>
+              </div>
+              <div class="expert-rate">₹{{ e.hourlyRate || selectedService?.hourlyRateInr || 0 }}/hr</div>
+              <div class="expert-link">View Certificates</div>
+            </button>
+          </div>
+
+          <div class="empty" *ngIf="expertCards.length === 0">
+            No experts available for this selection.
+          </div>
+        </div>
+
         <div class="actions">
           <button class="btn secondary" type="button" (click)="back()">Previous</button>
           <button
             class="btn"
             type="button"
             (click)="next()"
-            [disabled]="!durationMinutes || (bookingType==='SCHEDULED' && (!selectedDate || !selectedTimeSlot))"
+            [disabled]="!durationMinutes || !selectedExpertId || (bookingType==='SCHEDULED' && (!selectedDate || !selectedTimeSlot))"
           >
             Next
           </button>

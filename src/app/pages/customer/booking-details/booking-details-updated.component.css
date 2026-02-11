@@ -1,0 +1,310 @@
+.booking-details-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.back-btn {
+  padding: 8px 16px;
+  background: #f5f5f5;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.back-btn:hover {
+  background: #e0e0e0;
+}
+
+.loading,
+.error {
+  text-align: center;
+  padding: 40px;
+  font-size: 18px;
+}
+
+.error {
+  color: #d32f2f;
+}
+
+.content {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 30px;
+}
+
+.main-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.detail-section {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.detail-section h2 {
+  margin: 0 0 15px 0;
+  font-size: 20px;
+  color: #333;
+}
+
+.status-info,
+.service-info,
+.schedule-info,
+.address-info,
+.notes-info,
+.otp-info {
+  padding: 15px;
+  background: #f9f9f9;
+  border-radius: 4px;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.status-pending {
+  background: #fff3e0;
+  color: #f57c00;
+}
+
+.status-confirmed {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.status-inprogress {
+  background: #e8f5e9;
+  color: #388e3c;
+}
+
+.status-completed {
+  background: #c8e6c9;
+  color: #2e7d32;
+}
+
+.status-cancelled {
+  background: #ffebee;
+  color: #d32f2f;
+}
+
+.booking-id {
+  margin-top: 10px;
+  font-size: 13px;
+  color: #666;
+}
+
+.service-info h3 {
+  margin: 0 0 10px 0;
+  font-size: 18px;
+}
+
+.schedule-info p,
+.address-info p,
+.notes-info p {
+  margin: 8px 0;
+  font-size: 14px;
+}
+
+.service-info p {
+  margin: 5px 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.otp-section {
+  background: #fff8e1;
+  border: 2px solid #ffc107;
+}
+
+.otp-instruction {
+  margin-bottom: 15px;
+  font-size: 14px;
+  color: #666;
+}
+
+.otp-display {
+  margin: 15px 0;
+  text-align: center;
+}
+
+.otp-code {
+  display: inline-block;
+  padding: 15px 30px;
+  background: white;
+  border: 2px solid #ffc107;
+  border-radius: 8px;
+  font-size: 32px;
+  font-weight: bold;
+  letter-spacing: 8px;
+  color: #333;
+}
+
+.toggle-otp-btn {
+  padding: 10px 20px;
+  background: #ffc107;
+  color: #333;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.toggle-otp-btn:hover {
+  background: #ffb300;
+}
+
+.actions-section {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  padding: 20px 0;
+}
+
+.modify-btn,
+.feedback-btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.modify-btn {
+  background: #2196f3;
+  color: white;
+}
+
+.modify-btn:hover {
+  background: #1976d2;
+}
+
+.feedback-btn {
+  background: #4caf50;
+  color: white;
+}
+
+.feedback-btn:hover {
+  background: #45a049;
+}
+
+.summary-section {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  height: fit-content;
+  position: sticky;
+  top: 20px;
+}
+
+.summary-section h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 20px;
+}
+
+.price-summary {
+  margin-bottom: 20px;
+}
+
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.price-row.total {
+  font-weight: bold;
+  font-size: 18px;
+  border-top: 2px solid #333;
+  border-bottom: none;
+  padding-top: 15px;
+  margin-top: 10px;
+}
+
+.price-row .paid {
+  color: #4caf50;
+}
+
+.price-row .due {
+  color: #ff9800;
+}
+
+.payment-status {
+  text-align: center;
+  padding: 15px;
+  border-radius: 4px;
+}
+
+.status-label {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.paid-status {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.due-status {
+  background: #fff3e0;
+  color: #f57c00;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .content {
+    grid-template-columns: 1fr;
+  }
+
+  .summary-section {
+    position: static;
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .actions-section {
+    flex-direction: column;
+  }
+
+  .modify-btn,
+  .feedback-btn {
+    width: 100%;
+  }
+}

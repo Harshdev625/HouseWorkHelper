@@ -25,19 +25,19 @@
 
   <main class="dashboard-main">
     <!-- Availability Banner -->
-    <div class="availability-banner" [class.online]="isOnline">
+    <div class="availability-banner" [class.online]="(isOnline$ | async)">
       <div class="banner-content">
         <div class="greeting" *ngIf="user$ | async as user">
           <span class="user-avatar material-icons">account_circle</span>
           <div>
             <h2>Welcome, {{ user.fullName }}!</h2>
-            <p>{{ isOnline ? 'You are online and ready to accept jobs' : 'You are offline' }}</p>
+            <p>{{ (isOnline$ | async) ? 'You are online and ready to accept jobs' : 'You are offline' }}</p>
           </div>
         </div>
         
         <button class="toggle-status-btn" (click)="toggleOnlineStatus()">
-          <span class="material-icons">{{ isOnline ? 'pause_circle' : 'play_circle' }}</span>
-          {{ isOnline ? 'Go Offline' : 'Go Online' }}
+          <span class="material-icons">{{ (isOnline$ | async) ? 'pause_circle' : 'play_circle' }}</span>
+          {{ (isOnline$ | async) ? 'Go Offline' : 'Go Online' }}
         </button>
       </div>
     </div>
@@ -52,7 +52,7 @@
             <div class="report-card">
               <span class="material-icons card-icon">today</span>
               <div class="card-content">
-                <h4>{{ stats.todayJobs }}</h4>
+                <h4>{{ (stats$ | async)?.todayJobs }}</h4>
                 <p>Today's Jobs</p>
               </div>
             </div>
@@ -60,7 +60,7 @@
             <div class="report-card">
               <span class="material-icons card-icon">date_range</span>
               <div class="card-content">
-                <h4>{{ stats.thisWeekJobs }}</h4>
+                <h4>{{ (stats$ | async)?.thisWeekJobs }}</h4>
                 <p>This Week</p>
               </div>
             </div>
@@ -68,7 +68,7 @@
             <div class="report-card">
               <span class="material-icons card-icon">currency_rupee</span>
               <div class="card-content">
-                <h4>₹{{ stats.totalEarnings }}</h4>
+                <h4>₹{{ (stats$ | async)?.totalEarnings }}</h4>
                 <p>Total Earnings</p>
               </div>
             </div>
@@ -76,7 +76,7 @@
             <div class="report-card">
               <span class="material-icons card-icon">star</span>
               <div class="card-content">
-                <h4>{{ stats.rating }}</h4>
+                <h4>{{ (stats$ | async)?.rating }}</h4>
                 <p>My Rating</p>
               </div>
             </div>
@@ -87,14 +87,22 @@
         <div class="appointments-section">
           <h3>My Appointments</h3>
           
-          <div class="empty-state" *ngIf="appointments.length === 0">
+          <div class="empty-state" *ngIf="(appointments$ | async)?.length === 0">
             <span class="material-icons empty-icon">event_busy</span>
             <h4>No appointments yet</h4>
             <p>Your accepted bookings will appear here</p>
           </div>
 
-          <div class="appointments-list" *ngIf="appointments.length > 0">
-            <!-- Appointment cards will be loaded from backend -->
+          <div class="appointments-list" *ngIf="(appointments$ | async) as appts">
+            <div class="appointment-card" *ngFor="let a of appts">
+              <div class="appt-top">
+                <div class="appt-title">Booking</div>
+                <div class="appt-chip">₹{{ a.quotedAmount }}/- Earning</div>
+              </div>
+              <div class="appt-meta">{{ a.bookingType }} • {{ a.durationMinutes }} mins</div>
+              <div class="appt-meta" *ngIf="a.scheduledStartTime">{{ a.scheduledStartTime | date:'medium' }}</div>
+              <div class="appt-meta">Status: {{ a.status }}</div>
+            </div>
           </div>
         </div>
       </div>
@@ -105,25 +113,77 @@
         <div class="pending-requests">
           <h3>Pending Requests</h3>
           
-          <div class="empty-state-small" *ngIf="pendingRequests.length === 0">
+          <div class="empty-state-small" *ngIf="(pendingRequests$ | async)?.length === 0">
             <span class="material-icons">inbox</span>
             <p>No pending requests</p>
           </div>
 
-          <div class="requests-list" *ngIf="pendingRequests.length > 0">
-            <!-- Request cards will be loaded from backend -->
+          <div class="requests-list" *ngIf="(pendingRequests$ | async) as reqs">
+            <div class="request-card" *ngFor="let r of reqs">
+              <div class="req-meta">{{ r.bookingType }} • {{ r.durationMinutes }} mins</div>
+              <div class="req-meta" *ngIf="r.scheduledStartTime">{{ r.scheduledStartTime | date:'medium' }}</div>
+              <div class="req-meta">₹{{ r.quotedAmount }}</div>
+              <button class="take-action" type="button" (click)="openTakeAction(r)">Take Action</button>
+            </div>
           </div>
         </div>
 
-        <!-- Calendar -->
+        <!-- Availability -->
         <div class="calendar-widget">
-          <h3>My Calendar</h3>
+          <h3>My Availability</h3>
+
           <div class="calendar-content">
-            <span class="material-icons">calendar_month</span>
-            <p>Calendar integration coming soon</p>
+            <div class="req-meta">Select a date (next 4 days)</div>
+            <select class="select" [ngModel]="selectedAvailabilityDate" (ngModelChange)="onAvailabilityDateChange($event)">
+              <option *ngFor="let d of availabilityDateOptions" [ngValue]="d">{{ d }}</option>
+            </select>
+
+            <div class="req-meta" style="margin-top: 10px;">Select time slots</div>
+            <div class="tags" style="margin-top: 6px; flex-wrap: wrap;">
+              <button
+                type="button"
+                class="tag"
+                *ngFor="let t of timeSlots"
+                [class.selected]="selectedTimeSlots.has(t)"
+                (click)="toggleTimeSlot(t)"
+                style="cursor: pointer; border: none;"
+              >
+                {{ t }}
+              </button>
+            </div>
+
+            <div class="req-meta" *ngIf="availabilityError" style="color:#b91c1c; margin-top: 8px;">{{ availabilityError }}</div>
+            <div class="req-meta" *ngIf="availabilitySaved" style="color:#166534; margin-top: 8px;">Saved</div>
+
+            <button class="take-action" type="button" (click)="saveAvailability()" [disabled]="availabilitySaving || !selectedAvailabilityDate">
+              {{ availabilitySaving ? 'Saving…' : 'Save Availability' }}
+            </button>
           </div>
         </div>
       </aside>
     </div>
   </main>
+
+  <!-- Take Action Modal -->
+  <div class="modal" *ngIf="showActionModal" role="dialog" aria-modal="true">
+    <div class="modal-card" *ngIf="selectedRequest as r">
+      <div class="modal-head">
+        <div class="modal-title">Take Action</div>
+        <button class="icon" type="button" (click)="closeTakeAction()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="modal-row"><span class="k">Booking</span><span class="v">{{ r.id }}</span></div>
+        <div class="modal-row"><span class="k">Earnings</span><span class="v">₹{{ r.quotedAmount }}</span></div>
+        <div class="modal-row"><span class="k">Schedule</span><span class="v">{{ r.scheduledStartTime ? (r.scheduledStartTime | date:'medium') : 'ASAP' }}</span></div>
+        <div class="modal-row"><span class="k">Duration</span><span class="v">{{ r.durationMinutes }} mins</span></div>
+        <div class="modal-row"><span class="k">Status</span><span class="v">{{ r.status }}</span></div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn danger" type="button" [disabled]="actionBusy" (click)="rejectSelected()">Reject Booking</button>
+        <button class="btn" type="button" [disabled]="actionBusy" (click)="acceptSelected()">Accept Booking</button>
+      </div>
+    </div>
+  </div>
 </div>

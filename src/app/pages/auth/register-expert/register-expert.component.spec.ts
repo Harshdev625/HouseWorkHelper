@@ -55,6 +55,7 @@ describe('RegisterExpertComponent', () => {
     component.personalInfoForm.patchValue({
       fullName: 'John Doe',
       mobileNumber: '9876543210',
+      password: 'Expert@1234',
       dateOfBirth: '1995-01-01',
       completeAddress: 'Flat 1, Some Building, Some Street',
       city: 'Pune',
@@ -70,6 +71,7 @@ describe('RegisterExpertComponent', () => {
     component.personalInfoForm.patchValue({
       fullName: 'John Doe',
       mobileNumber: '9876543210',
+      password: 'Expert@1234',
       dateOfBirth: '1995-01-01',
       completeAddress: 'Flat 1, Some Building, Some Street',
       city: 'Pune',
@@ -105,6 +107,7 @@ describe('RegisterExpertComponent', () => {
     component.personalInfoForm.patchValue({
       fullName: 'John Doe',
       mobileNumber: '9876543210',
+      password: 'Expert@1234',
       dateOfBirth: '1995-01-01',
       completeAddress: 'Flat 1, Some Building, Some Street',
       city: 'Pune',

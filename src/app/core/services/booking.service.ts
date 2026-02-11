@@ -64,6 +64,11 @@ export class BookingService {
     return this.http.get<BackendBooking[]>(`${this.apiUrl}/bookings`, { params });
   }
 
+  getBookingsByExpert(expertProfileId: string): Observable<BackendBooking[]> {
+    const params = new HttpParams().set('expertId', expertProfileId);
+    return this.http.get<BackendBooking[]>(`${this.apiUrl}/bookings`, { params });
+  }
+
   getBookingById(bookingId: string): Observable<BackendBooking> {
     return this.http.get<BackendBooking>(`${this.apiUrl}/bookings/${bookingId}`);
   }

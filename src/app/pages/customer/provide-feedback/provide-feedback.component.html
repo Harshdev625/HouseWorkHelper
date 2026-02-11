@@ -1,0 +1,95 @@
+<div class="provide-feedback-container">
+  <header class="header">
+    <button class="back-btn" (click)="back()">&larr; Back to Dashboard</button>
+    <h1>Provide Feedback</h1>
+  </header>
+
+  <div class="loading" *ngIf="loading">Loading completed bookings...</div>
+  <div class="error" *ngIf="error">{{ error }}</div>
+
+  <div class="content" *ngIf="!loading && !error">
+    <div class="empty-state" *ngIf="completedBookings.length === 0">
+      <p>No completed bookings to review yet.</p>
+      <button class="primary-btn" (click)="back()">Back to Dashboard</button>
+    </div>
+
+    <div class="bookings-list" *ngIf="completedBookings.length > 0">
+      <div class="booking-card" *ngFor="let item of completedBookings">
+        <div class="booking-header">
+          <h3>{{ item.service?.name || 'Service' }}</h3>
+          <span class="status-badge completed">Completed</span>
+        </div>
+
+        <div class="booking-details">
+          <p><strong>Expert:</strong> {{ item.expert?.fullName || 'N/A' }}</p>
+          <p><strong>Date:</strong> {{ formatDate(item.booking.actualEndTime || item.booking.scheduledStartTime) }}</p>
+          <p><strong>Amount:</strong> ₹{{ item.booking.quotedAmount }}</p>
+        </div>
+
+        <div class="booking-actions">
+          <button 
+            *ngIf="!item.hasRating" 
+            class="feedback-btn" 
+            (click)="openFeedbackModal(item)">
+            Provide Feedback
+          </button>
+          <span *ngIf="item.hasRating" class="reviewed-badge">✓ Reviewed</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Feedback Modal -->
+  <div class="modal-overlay" *ngIf="showFeedbackModal" (click)="closeFeedbackModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Provide Feedback</h2>
+        <button class="close-btn" (click)="closeFeedbackModal()">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="service-info">
+          <p class="subtitle">{{ selectedService?.name || 'Service' }} service was completed by {{ selectedExpert?.fullName || 'Expert' }}</p>
+        </div>
+
+        <div class="rating-section">
+          <label>Rating *</label>
+          <div class="star-rating">
+            <span 
+              *ngFor="let star of [1, 2, 3, 4, 5]" 
+              class="star"
+              [class.filled]="star <= (hoveredRating || rating)"
+              (click)="setRating(star)"
+              (mouseenter)="setHoveredRating(star)"
+              (mouseleave)="clearHoveredRating()">
+              ★
+            </span>
+          </div>
+          <p class="rating-text" *ngIf="rating > 0">
+            {{ rating === 1 ? 'Poor' : rating === 2 ? 'Fair' : rating === 3 ? 'Good' : rating === 4 ? 'Very Good' : 'Excellent' }}
+          </p>
+        </div>
+
+        <div class="feedback-section">
+          <label>Feedback (Optional)</label>
+          <textarea 
+            [(ngModel)]="feedback" 
+            class="feedback-textarea" 
+            rows="4" 
+            placeholder="Share your experience with this service...">
+          </textarea>
+        </div>
+
+        <div class="modal-actions">
+          <button class="secondary-btn" (click)="closeFeedbackModal()">Close</button>
+          <button 
+            class="submit-btn" 
+            (click)="submitFeedback()" 
+            [disabled]="!rating || submitting">
+            {{ submitting ? 'Submitting...' : 'Submit Feedback' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

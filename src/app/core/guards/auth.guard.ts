@@ -1,14 +1,15 @@
 import { inject } from '@angular/core';
 import { Router, CanActivateFn } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { map } from 'rxjs/operators';
-import { selectIsAuthenticated, selectIsCustomer } from '../../store/auth/auth.selectors';
+import { map, take } from 'rxjs/operators';
+import { selectIsAuthenticated, selectUser } from '../../store/auth/auth.selectors';
 
 export const authGuard: CanActivateFn = () => {
   const store = inject(Store);
   const router = inject(Router);
 
   return store.select(selectIsAuthenticated).pipe(
+    take(1),
     map(isAuthenticated => {
       if (!isAuthenticated) {
         router.navigate(['/']);
@@ -23,8 +24,10 @@ export const customerGuard: CanActivateFn = () => {
   const store = inject(Store);
   const router = inject(Router);
 
-  return store.select(selectIsCustomer).pipe(
-    map(isCustomer => {
+  return store.select(selectUser).pipe(
+    take(1),
+    map(user => {
+      const isCustomer = user?.roles?.[0] === 'ROLE_CUSTOMER';
       if (!isCustomer) {
         router.navigate(['/']);
         return false;
@@ -38,28 +41,14 @@ export const expertGuard: CanActivateFn = () => {
   const store = inject(Store);
   const router = inject(Router);
 
-  return store.select(selectIsAuthenticated).pipe(
-    map(isAuthenticated => {
-      if (!isAuthenticated) {
+  return store.select(selectUser).pipe(
+    take(1),
+    map(user => {
+      const isExpert = user?.roles?.[0] === 'ROLE_EXPERT';
+      if (!isExpert) {
         router.navigate(['/']);
         return false;
       }
-      
-      // Check if user is an expert
-      const token = localStorage.getItem('token');
-      if (token) {
-        try {
-          const payload = JSON.parse(atob(token.split('.')[1]));
-          if (payload.role !== 'ROLE_EXPERT') {
-            router.navigate(['/']);
-            return false;
-          }
-        } catch (e) {
-          router.navigate(['/']);
-          return false;
-        }
-      }
-      
       return true;
     })
   );
